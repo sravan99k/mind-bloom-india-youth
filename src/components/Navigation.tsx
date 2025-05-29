@@ -1,16 +1,16 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Assessment, School, Resources } from "lucide-react";
+import { Home, ClipboardList, School, BookOpen } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
-    { name: "Assessment", path: "/assessment", icon: Assessment },
+    { name: "Assessment", path: "/assessment", icon: ClipboardList },
     { name: "School Dashboard", path: "/school-dashboard", icon: School },
-    { name: "Resources", path: "/resources", icon: Resources },
+    { name: "Resources", path: "/resources", icon: BookOpen },
   ];
 
   return (
