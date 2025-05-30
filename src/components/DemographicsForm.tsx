@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface DemographicsFormProps {
   onComplete: (data: any) => void;
@@ -21,11 +23,59 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
     schoolName: "",
     branch: ""
   });
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Demographics data:", formData);
-    onComplete(formData);
+    setLoading(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "Please log in to continue.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('demographics')
+        .insert({
+          user_id: user.id,
+          age: parseInt(formData.class) || null,
+          gender: formData.gender,
+          grade: formData.class,
+          school: formData.schoolName,
+        });
+
+      if (error) {
+        toast({
+          title: "Error Saving Data",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Information Saved",
+        description: "Your personal information has been saved successfully.",
+      });
+      
+      onComplete(formData);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -51,6 +101,7 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                   value={formData.state}
                   onChange={(e) => handleInputChange("state", e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -60,6 +111,7 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                   value={formData.city}
                   onChange={(e) => handleInputChange("city", e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -72,11 +124,12 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                   value={formData.pincode}
                   onChange={(e) => handleInputChange("pincode", e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="class">Class</Label>
-                <Select onValueChange={(value) => handleInputChange("class", value)}>
+                <Select onValueChange={(value) => handleInputChange("class", value)} disabled={loading}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your class" />
                   </SelectTrigger>
@@ -96,7 +149,7 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="gender">Gender</Label>
-                <Select onValueChange={(value) => handleInputChange("gender", value)}>
+                <Select onValueChange={(value) => handleInputChange("gender", value)} disabled={loading}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
@@ -115,6 +168,7 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                   value={formData.rollno}
                   onChange={(e) => handleInputChange("rollno", e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -127,11 +181,12 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                   value={formData.schoolName}
                   onChange={(e) => handleInputChange("schoolName", e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="branch">Branch/Stream</Label>
-                <Select onValueChange={(value) => handleInputChange("branch", value)}>
+                <Select onValueChange={(value) => handleInputChange("branch", value)} disabled={loading}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select branch" />
                   </SelectTrigger>
@@ -145,8 +200,12 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-600">
-              Continue to Assessment
+            <Button 
+              type="submit" 
+              className="w-full bg-teal-500 hover:bg-teal-600"
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Continue to Assessment"}
             </Button>
           </form>
         </CardContent>

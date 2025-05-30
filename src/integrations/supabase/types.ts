@@ -9,7 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      assessment_responses: {
+        Row: {
+          categories: string[]
+          completed_at: string
+          id: string
+          responses: Json
+          user_id: string
+        }
+        Insert: {
+          categories: string[]
+          completed_at?: string
+          id?: string
+          responses: Json
+          user_id: string
+        }
+        Update: {
+          categories?: string[]
+          completed_at?: string
+          id?: string
+          responses?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      demographics: {
+        Row: {
+          age: number | null
+          created_at: string
+          gender: string | null
+          grade: string | null
+          id: string
+          school: string | null
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          gender?: string | null
+          grade?: string | null
+          id?: string
+          school?: string | null
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          gender?: string | null
+          grade?: string | null
+          id?: string
+          school?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

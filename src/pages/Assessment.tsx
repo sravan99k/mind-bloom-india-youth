@@ -1,16 +1,28 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import AuthForm from "@/components/AuthForm";
 import DemographicsForm from "@/components/DemographicsForm";
 import AssessmentCategorySelection from "@/components/AssessmentCategorySelection";
 import AssessmentForm from "@/components/AssessmentForm";
+import { useAuth } from "@/hooks/useAuth";
 
 const Assessment = () => {
-  const [currentStep, setCurrentStep] = useState("auth"); // auth, demographics, categories, assessment
+  const [currentStep, setCurrentStep] = useState("auth");
   const [demographicsData, setDemographicsData] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user && currentStep === "auth") {
+        setCurrentStep("demographics");
+      } else if (!user && currentStep !== "auth") {
+        setCurrentStep("auth");
+      }
+    }
+  }, [user, loading, currentStep]);
 
   const handleAuthComplete = () => {
     setCurrentStep("demographics");
@@ -25,6 +37,17 @@ const Assessment = () => {
     setSelectedCategories(categories);
     setCurrentStep("assessment");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (currentStep === "auth") {
     return <AuthForm onAuthComplete={handleAuthComplete} />;

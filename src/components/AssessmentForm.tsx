@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AssessmentFormProps {
   selectedCategories: string[];
@@ -16,6 +16,7 @@ interface AssessmentFormProps {
 const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const assessmentQuestions = {
@@ -386,13 +387,11 @@ const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
     ]
   };
 
-  // Build questions array based on selected categories
   const buildQuestionsList = () => {
     let allQuestions: any[] = [];
     
     selectedCategories.forEach(category => {
       if (category === "overall") {
-        // Include all questions for overall test
         Object.values(assessmentQuestions).forEach(categoryQuestions => {
           allQuestions = [...allQuestions, ...categoryQuestions];
         });
@@ -401,7 +400,6 @@ const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
       }
     });
 
-    // Add final open-ended question
     allQuestions.push({
       question: "If you want to say something or express your fear, or anything that is harming you, please mention here",
       type: "textarea",
@@ -413,14 +411,53 @@ const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
 
   const questions = buildQuestionsList();
 
-  const handleNext = () => {
+  const saveAssessmentToDatabase = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const { error } = await supabase
+        .from('assessment_responses')
+        .insert({
+          user_id: user.id,
+          categories: selectedCategories,
+          responses: responses,
+        });
+
+      if (error) throw error;
+
+      return true;
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      return false;
+    }
+  };
+
+  const handleNext = async () => {
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      toast({
-        title: "Assessment Complete!",
-        description: "Your responses have been recorded. A counselor will review your assessment.",
-      });
+      setLoading(true);
+      
+      const saved = await saveAssessmentToDatabase();
+      
+      if (saved) {
+        toast({
+          title: "Assessment Complete!",
+          description: "Your responses have been recorded. A counselor will review your assessment.",
+        });
+      } else {
+        toast({
+          title: "Error Saving Assessment",
+          description: "There was an error saving your responses. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
+      setLoading(false);
     }
   };
 
@@ -515,15 +552,16 @@ const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
         <Button
           variant="outline"
           onClick={handleBack}
-          disabled={currentStep === 0}
+          disabled={currentStep === 0 || loading}
         >
           Back
         </Button>
         <Button
           onClick={handleNext}
           className="bg-teal-500 hover:bg-teal-600"
+          disabled={loading}
         >
-          {currentStep === questions.length - 1 ? "Complete Assessment" : "Next"}
+          {loading ? "Saving..." : (currentStep === questions.length - 1 ? "Complete Assessment" : "Next")}
         </Button>
       </div>
     </div>

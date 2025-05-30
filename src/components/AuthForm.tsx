@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   onAuthComplete: () => void;
@@ -18,19 +20,105 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     password: "", 
     confirmPassword: "" 
   });
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login - in real app, this would authenticate with backend
-    console.log("Login attempt:", loginData);
-    onAuthComplete();
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+        onAuthComplete();
+      }
+    } catch (error) {
+      toast({
+        title: "Login Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate signup - in real app, this would create account
-    console.log("Signup attempt:", signupData);
-    onAuthComplete();
+
+    if (signupData.password !== signupData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please check and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (signupData.password.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: signupData.email,
+        password: signupData.password,
+        options: {
+          data: {
+            name: signupData.name,
+          }
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Signup Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Account Created!",
+          description: "Your account has been created successfully. You can now proceed with the assessment.",
+        });
+        onAuthComplete();
+      }
+    } catch (error) {
+      toast({
+        title: "Signup Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,6 +147,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={loginData.email}
                     onChange={(e) => setLoginData({...loginData, email: e.target.value})}
                     required
+                    disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -69,10 +158,15 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={loginData.password}
                     onChange={(e) => setLoginData({...loginData, password: e.target.value})}
                     required
+                    disabled={loading}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-600">
-                  Sign In
+                <Button 
+                  type="submit" 
+                  className="w-full bg-teal-500 hover:bg-teal-600"
+                  disabled={loading}
+                >
+                  {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </TabsContent>
@@ -87,6 +181,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={signupData.name}
                     onChange={(e) => setSignupData({...signupData, name: e.target.value})}
                     required
+                    disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -97,6 +192,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={signupData.email}
                     onChange={(e) => setSignupData({...signupData, email: e.target.value})}
                     required
+                    disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -107,6 +203,8 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={signupData.password}
                     onChange={(e) => setSignupData({...signupData, password: e.target.value})}
                     required
+                    disabled={loading}
+                    minLength={6}
                   />
                 </div>
                 <div className="space-y-2">
@@ -117,10 +215,16 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     value={signupData.confirmPassword}
                     onChange={(e) => setSignupData({...signupData, confirmPassword: e.target.value})}
                     required
+                    disabled={loading}
+                    minLength={6}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-teal-500 hover:bg-teal-600">
-                  Create Account
+                <Button 
+                  type="submit" 
+                  className="w-full bg-teal-500 hover:bg-teal-600"
+                  disabled={loading}
+                >
+                  {loading ? "Creating Account..." : "Create Account"}
                 </Button>
               </form>
             </TabsContent>
