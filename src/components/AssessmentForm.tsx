@@ -23,193 +23,365 @@ const AssessmentForm = ({ selectedCategories }: AssessmentFormProps) => {
       {
         question: "I often feel lonely or tearful",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I feel overwhelmed by my emotions",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I have felt hopeless or helpless recently",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I feel like life is not worth living",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I have thoughts of hurting myself",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "When feeling low, I prefer:",
         type: "radio",
-        options: ["Talking to friends", "Talking to parents", "Talking to teachers", "Solving on my own", "Ignoring the feelings", "Waiting for things to improve"]
+        options: ["Talking to friends", "Talking to parents", "Talking to teachers", "Solving on my own", "Ignoring the feelings", "Waiting for things to improve", "Other"]
       },
       {
-        question: "I usually cope with stress by:",
+        question: "I feel overwhelmed by my emotions",
         type: "radio",
-        options: ["Yoga or meditation", "Changing the way I think", "Writing a diary", "Watching TV", "Helping others"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never", "Skip"]
       },
       {
-        question: "I have people I can talk to about my feelings",
+        question: "I have felt hopeless or helpless recently",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never", "Skip"]
+      },
+      {
+        question: "I feel like life is not worth living",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never", "Skip"]
+      },
+      {
+        question: "I have thoughts of hurting myself",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never", "Skip"]
+      },
+      {
+        question: "I find it difficult to share my feelings with others",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never", "Skip"]
       }
     ],
     stress: [
       {
-        question: "I feel anxious due to:",
+        question: "What prevents you from doing well academically?",
         type: "checkbox",
-        options: ["Studies", "Exams", "Results", "College admissions", "Career"]
+        options: ["Lack of concentration", "Poor study habits", "Difficulty managing time", "Distractions", "Difficulty understanding content", "Other"]
       },
       {
-        question: "I often feel anxious",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        question: "What challenges did you face during online classes?",
+        type: "checkbox",
+        options: ["Difficulty understanding content", "Technical issues", "Lack of time management", "Electricity/internet problems", "Personal reasons", "Lack of social interaction", "Other"]
       },
       {
         question: "I feel hopeful during stressful situations",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "When feeling low, I prefer:",
+        type: "radio",
+        options: ["Talking to friends", "Talking to parents", "Talking to teachers", "Solving on my own", "Ignoring the feelings", "Waiting for things to improve", "Other"]
       },
       {
         question: "I usually cope with stress by:",
         type: "radio",
-        options: ["Yoga or meditation", "Changing the way I think", "Writing a diary", "Watching TV", "Helping others"]
+        options: ["Yoga or meditation", "Changing the way I think", "Writing a diary", "Watching TV", "Helping others", "Other"]
       },
       {
         question: "I eat even when I'm not hungry due to stress or emotions",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
-        question: "I overeat when stressed",
+        question: "I feel pressure to look a certain way because of social media or peers",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I feel overwhelmed by my emotions",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       }
     ],
     adhd: [
       {
         question: "I often find it difficult to stay focused during class",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I have trouble finishing assignments or tasks on time",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I frequently forget things like assignments, books, or my personal items",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I get distracted easily, even by things that aren't part of the task at hand",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I often find myself daydreaming or thinking about unrelated things when I should be focusing",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I have trouble sitting still or staying in one place for a long time",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I talk or move around excessively, even when it's not appropriate",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I tend to act impulsively, without thinking about the consequences",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I often interrupt others or have trouble waiting for my turn during conversations",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I struggle with organizing tasks or managing my time effectively",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I often feel restless or find it hard to relax, even when I should be resting",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "When I'm asked to complete a task, I often start it but don't finish it",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "Do you often lose things necessary for tasks (e.g., books, pencils, assignments)?",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Occasionally", "Never"]
+      }
+    ],
+    anxiety: [
+      {
+        question: "I hesitate to ask questions in class",
+        type: "radio",
+        options: ["Yes", "No", "Sometimes"]
+      },
+      {
+        question: "I find it difficult to initiate conversations",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I worry that people don't like me",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I feel anxious due to:",
+        type: "checkbox",
+        options: ["Studies", "Exams", "Results", "College admissions", "Career", "I don't feel anxious", "Other"]
+      },
+      {
+        question: "I feel like I don't belong or fit in at school",
+        type: "radio",
+        options: ["Yes", "No", "Neither"]
+      },
+      {
+        question: "I often feel anxious",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I feel guilty after eating",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I avoid eating in front of others",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I worry excessively about gaining weight",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I feel pressure to look a certain way because of social media or peers",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I find it difficult to share my feelings with others",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       }
     ],
     wellbeing: [
       {
         question: "I am able to quickly adapt to changes in life",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I trust others easily",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I feel satisfied with my personal life",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I feel satisfied with my school life",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I feel responsible for doing well in my life",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I feel confident about my body image",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "I can understand and respect others' viewpoints",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I hesitate to ask questions in class",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
-      },
-      {
-        question: "I find it difficult to initiate conversations",
-        type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
       },
       {
         question: "People in my life see me as a happy person",
         type: "radio",
-        options: ["Never", "Rarely", "Sometimes", "Often", "Always"]
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "My teachers see me as a good leader",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "My friends consider me trustworthy",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I give in to peer pressure to fit in",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I am satisfied with my academic performance",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I am able to submit my assignments on time",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I feel valued when I perform well academically",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I get bothered when teachers don't notice my efforts",
+        type: "radio",
+        options: ["Yes", "No", "Neither"]
+      },
+      {
+        question: "I feel jealous of others who are more popular or successful",
+        type: "radio",
+        options: ["Yes", "No", "Neither"]
+      },
+      {
+        question: "I don't enjoy group activities or school events",
+        type: "radio",
+        options: ["Yes", "No", "Neither"]
+      },
+      {
+        question: "I find online classes better than offline classes",
+        type: "radio",
+        options: ["Yes", "No", "Maybe"]
+      },
+      {
+        question: "I often feel happy",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I can understand others feelings and respond accordingly",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I get into fights with my classmates or friends",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I skip school or classes without a good reason",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I tend to lie or hide the truth to avoid trouble",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I have trouble following rules or instructions",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I believe I can solve challenging tasks",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I have people I can talk to about my feelings",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        question: "I feel satisfied with my eating habits",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I skip meals intentionally",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "I restrict food intake to control my weight",
+        type: "radio",
+        options: ["Always", "Often", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        question: "Do you think your eating habits affect your emotional or physical well-being?",
+        type: "radio",
+        options: ["Yes", "No", "Not Sure"]
+      },
+      {
+        question: "In what ways do you feel affected? (Select all that apply)",
+        type: "checkbox",
+        options: ["I feel tired or weak", "I feel anxious about food or my body", "I avoid certain foods or meals", "I overeat when stressed", "I follow strict diets", "I compare my body to others", "Other"]
+      },
+      {
+        question: "I take part in risky activities:",
+        type: "checkbox",
+        options: ["Skipping classes", "Engaging in unsafe actions (e.g., reckless behavior, unsafe stunts)", "Bullying or getting into fights", "Experimenting with substances – I try alcohol, smoking, or other substances", "Driving without a license", "Stealing or shoplifting", "Running away from home", "Avoiding homework or assignments intentionally", "Using weapons or carrying dangerous objects that could hurt others", "Skip", "Other"]
       }
     ]
   };

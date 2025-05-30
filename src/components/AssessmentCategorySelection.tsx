@@ -28,6 +28,11 @@ const AssessmentCategorySelection = ({ onCategorySelect }: AssessmentCategorySel
       description: "Screen for attention, focus, and hyperactivity symptoms"
     },
     {
+      id: "anxiety",
+      name: "Anxiety",
+      description: "Assess anxiety levels and social interaction concerns"
+    },
+    {
       id: "wellbeing",
       name: "Overall Well-being",
       description: "Comprehensive assessment of life satisfaction and social connections"
