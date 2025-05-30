@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, ClipboardList, School, BookOpen, Heart } from "lucide-react";
+import { Home, ClipboardList, School, BookOpen } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -14,22 +14,17 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm shadow-lg border-b-2 border-purple-100 sticky top-0 z-50">
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-18">
-          <div className="flex items-center space-x-3 animate-fade-in">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-all duration-300 animate-pulse">
-              <Heart className="text-white font-bold text-lg w-6 h-6 fill-current" />
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                NovoHealth
-              </span>
-              <span className="text-xs text-gray-500 font-medium">Your Mental Wellness Friend</span>
-            </div>
+            <span className="text-xl font-semibold text-gray-900">NovoHealth</span>
           </div>
           
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -37,13 +32,13 @@ const Navigation = () => {
                 <Link key={item.path} to={item.path}>
                   <Button
                     variant={isActive ? "default" : "ghost"}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 ${
+                    className={`flex items-center space-x-2 ${
                       isActive 
-                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg hover:from-purple-600 hover:to-blue-600" 
-                        : "text-gray-700 hover:text-purple-600 hover:bg-purple-50"
+                        ? "bg-teal-500 text-white hover:bg-teal-600" 
+                        : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4" />
                     <span>{item.name}</span>
                   </Button>
                 </Link>
@@ -53,11 +48,8 @@ const Navigation = () => {
 
           <div className="md:hidden">
             <Link to="/student-dashboard">
-              <Button 
-                size="sm" 
-                className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                Dashboard ✨
+              <Button size="sm" className="bg-teal-500 hover:bg-teal-600">
+                Dashboard
               </Button>
             </Link>
           </div>
