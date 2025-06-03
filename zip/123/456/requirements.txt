@@ -1,9 +1,0 @@
-flask
-pandas
-scikit-learn
-joblib
-matplotlib
-seaborn
-fpdf
-gspread
-google-auth
