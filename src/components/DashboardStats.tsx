@@ -2,85 +2,90 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { TrendingUp, Calendar, Heart, Target } from "lucide-react";
 
 const DashboardStats = () => {
   const stats = [
-    { label: "Overall Mental Health Status", value: 48, status: "Moderate Risk", color: "bg-yellow-500" },
-    { label: "Stress", value: 62, status: "High", color: "bg-red-500" },
-    { label: "Depression", value: 38, status: "Moderate", color: "bg-orange-500" },
-    { label: "Eating Disorder", value: 45, status: "Moderate", color: "bg-orange-500" },
-    { label: "Behavioral Issues", value: 47, status: "Moderate", color: "bg-orange-500" }
+    {
+      title: "Overall Wellbeing",
+      value: "Good",
+      description: "Based on your recent assessments",
+      progress: 75,
+      icon: Heart,
+      color: "text-green-600"
+    },
+    {
+      title: "Weekly Progress",
+      value: "3/5",
+      description: "Mindfulness sessions completed",
+      progress: 60,
+      icon: Target,
+      color: "text-blue-600"
+    },
+    {
+      title: "Streak",
+      value: "7 days",
+      description: "Consistent daily check-ins",
+      progress: 100,
+      icon: TrendingUp,
+      color: "text-purple-600"
+    },
+    {
+      title: "Next Assessment",
+      value: "2 days",
+      description: "Monthly wellbeing check",
+      progress: 33,
+      icon: Calendar,
+      color: "text-orange-600"
+    }
   ];
 
   return (
     <div className="space-y-6">
-      <Card>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Dashboard</h2>
+        <p className="text-gray-600">Here's how you're doing with your mental health journey</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={index} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <Icon className={`h-4 w-4 ${stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold mb-2">{stat.value}</div>
+                <p className="text-xs text-muted-foreground mb-3">{stat.description}</p>
+                <Progress value={stat.progress} className="h-2" />
+                <p className="text-xs text-muted-foreground mt-2">{stat.progress}% complete</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <Card className="bg-gradient-to-r from-teal-50 to-blue-50 border-teal-200">
         <CardHeader>
-          <CardTitle>Overall Mental Health Status</CardTitle>
-          <CardDescription>
-            Based on your responses across all assessment areas
+          <CardTitle className="text-teal-800">Quick Actions</CardTitle>
+          <CardDescription className="text-teal-600">
+            Take care of your mental health today
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold">48%</span>
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
-                Moderate Risk
-              </span>
-            </div>
-            <Progress value={48} className="h-3" />
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>Low</span>
-              <span>Moderate</span>
-              <span>High</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {stats.slice(1).map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">{stat.label}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold">{stat.value}%</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    stat.status === "High" ? "bg-red-100 text-red-800" : "bg-orange-100 text-orange-800"
-                  }`}>
-                    {stat.status}
-                  </span>
-                </div>
-                <Progress value={stat.value} className="h-2" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="bg-blue-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <span>💡</span>
-            <span>Personalized Guidance</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-sm text-gray-700 mb-4">
-            <li>• High stress detected. Try relaxation techniques like deep breathing, yoga, or regular physical activity.</li>
-            <li>• Consider implementing a balanced eating routine and healthy relationship with food.</li>
-            <li>• Connect with school counselors for additional support and guidance.</li>
-          </ul>
-          <Link to="/resources">
-            <Button className="w-full bg-blue-500 hover:bg-blue-600">
-              Explore Recommended Resources
+          <div className="flex flex-wrap gap-3">
+            <Button className="bg-teal-500 hover:bg-teal-600 text-white">
+              Take Assessment
             </Button>
-          </Link>
+            <Button variant="outline" className="border-teal-300 text-teal-700 hover:bg-teal-50">
+              Browse Resources
+            </Button>
+            <Button variant="outline" className="border-teal-300 text-teal-700 hover:bg-teal-50">
+              Contact Counselor
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
