@@ -2,7 +2,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
 
 interface AssessmentResultsProps {
   results: any;
@@ -25,16 +24,16 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
     return categoryRules[category as keyof typeof categoryRules] || 50;
   };
 
-  const getSliderColor = (percentage: number) => {
+  const getRiskLevel = (percentage: number) => {
+    if (percentage >= 70) return { level: "High Risk", color: "text-red-600", bgColor: "bg-red-100" };
+    if (percentage >= 40) return { level: "Moderate Risk", color: "text-yellow-600", bgColor: "bg-yellow-100" };
+    return { level: "Low Risk", color: "text-green-600", bgColor: "bg-green-100" };
+  };
+
+  const getProgressBarColor = (percentage: number) => {
     if (percentage >= 70) return "bg-red-500";
     if (percentage >= 40) return "bg-yellow-500";
     return "bg-green-500";
-  };
-
-  const getRiskLevel = (percentage: number) => {
-    if (percentage >= 70) return { level: "High Risk", color: "text-red-600" };
-    if (percentage >= 40) return { level: "Moderate Risk", color: "text-yellow-600" };
-    return { level: "Low Risk", color: "text-green-600" };
   };
 
   return (
@@ -65,28 +64,65 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
                 {category === 'overall' && "Overall comprehensive mental health evaluation"}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Percentage Display */}
               <div className="text-center">
-                <div className="text-4xl font-bold text-gray-900 mb-2">{percentage}%</div>
-                <div className={`text-lg font-medium ${risk.color}`}>{risk.level}</div>
+                <div className="text-6xl font-bold text-gray-900 mb-2">{percentage}%</div>
+                <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium ${risk.color} ${risk.bgColor}`}>
+                  {risk.level}
+                </div>
               </div>
               
+              {/* Risk Slider */}
+              <div className="space-y-4">
+                <div className="relative">
+                  {/* Background slider track */}
+                  <div className="h-8 w-full bg-gray-200 rounded-full relative overflow-hidden">
+                    {/* Color segments */}
+                    <div className="absolute left-0 top-0 h-full w-1/3 bg-green-400"></div>
+                    <div className="absolute left-1/3 top-0 h-full w-1/3 bg-yellow-400"></div>
+                    <div className="absolute left-2/3 top-0 h-full w-1/3 bg-red-400"></div>
+                    
+                    {/* Progress indicator */}
+                    <div 
+                      className="absolute top-0 h-full bg-white border-2 border-gray-800 rounded-full transition-all duration-500"
+                      style={{ 
+                        left: `${Math.max(0, Math.min(percentage, 100))}%`,
+                        width: '4px',
+                        transform: 'translateX(-2px)'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* Labels */}
+                  <div className="flex justify-between text-sm font-medium mt-2">
+                    <span className="text-green-600">Low Risk</span>
+                    <span className="text-yellow-600">Moderate Risk</span>
+                    <span className="text-red-600">High Risk</span>
+                  </div>
+                  
+                  {/* Scale markers */}
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0%</span>
+                    <span>40%</span>
+                    <span>70%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Bar Alternative */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Low Risk</span>
-                  <span>High Risk</span>
+                  <span>Risk Level</span>
+                  <span>{percentage}%</span>
                 </div>
                 <div className="relative">
                   <Progress value={percentage} className="h-4" />
                   <div 
-                    className={`absolute top-0 left-0 h-4 rounded ${getSliderColor(percentage)} transition-all duration-500`}
+                    className={`absolute top-0 left-0 h-4 rounded transition-all duration-500 ${getProgressBarColor(percentage)}`}
                     style={{ width: `${percentage}%` }}
                   />
-                </div>
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span className="text-green-600">0-39%</span>
-                  <span className="text-yellow-600">40-69%</span>
-                  <span className="text-red-600">70-100%</span>
                 </div>
               </div>
             </CardContent>
