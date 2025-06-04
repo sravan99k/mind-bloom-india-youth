@@ -8,14 +8,33 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, TrendingUp, TrendingDown, Users, AlertTriangle, Download, Filter, Search } from "lucide-react";
 
+interface AssessmentResult {
+  depression?: number;
+  stress?: number;
+  anxiety?: number;
+  adhd?: number;
+  wellbeing?: number;
+  overall?: number;
+}
+
+interface AssessmentData {
+  id: string;
+  user_id: string;
+  categories: string[];
+  responses: any;
+  results?: AssessmentResult;
+  completed_at: string;
+}
+
 const ProgressTracking = () => {
   const { user } = useAuth();
-  const [assessmentData, setAssessmentData] = useState<any[]>([]);
+  const [assessmentData, setAssessmentData] = useState<AssessmentData[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
@@ -57,11 +76,11 @@ const ProgressTracking = () => {
 
     return assessmentData.map((assessment, index) => ({
       date: new Date(assessment.completed_at).toLocaleDateString(),
-      depression: assessment.results?.depression || Math.floor(Math.random() * 100),
-      stress: assessment.results?.stress || Math.floor(Math.random() * 100),
-      anxiety: assessment.results?.anxiety || Math.floor(Math.random() * 100),
-      wellbeing: assessment.results?.wellbeing || Math.floor(Math.random() * 100),
-      overall: assessment.results?.overall || Math.floor(Math.random() * 100),
+      depression: (assessment.results?.depression as number) || Math.floor(Math.random() * 100),
+      stress: (assessment.results?.stress as number) || Math.floor(Math.random() * 100),
+      anxiety: (assessment.results?.anxiety as number) || Math.floor(Math.random() * 100),
+      wellbeing: (assessment.results?.wellbeing as number) || Math.floor(Math.random() * 100),
+      overall: (assessment.results?.overall as number) || Math.floor(Math.random() * 100),
     }));
   };
 
@@ -215,41 +234,117 @@ const ProgressTracking = () => {
           {isManagement ? (
             // Management View
             <div className="space-y-8">
-              {/* Student List */}
+              {/* Student Overview Table */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Users className="w-5 h-5" />
-                    Student Overview
+                    Student Overview Dashboard
                   </CardTitle>
                   <CardDescription>
-                    Latest risk assessments for all students
+                    Latest risk assessments for all students with color-coded risk levels
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {studentList.map((student) => (
-                      <div key={student.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                           onClick={() => setSelectedStudent(student.id)}>
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <p className="font-medium">{student.name}</p>
-                            <p className="text-sm text-gray-500">{student.id} • {student.class}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <Badge className={getRiskBadgeColor(student.riskLevel)}>
-                            {student.riskLevel} Risk
-                          </Badge>
-                          <p className="text-sm text-gray-500">Last: {student.lastAssessment}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Student ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Class</TableHead>
+                        <TableHead>Depression</TableHead>
+                        <TableHead>Stress</TableHead>
+                        <TableHead>Anxiety</TableHead>
+                        <TableHead>Overall Risk</TableHead>
+                        <TableHead>Last Assessment</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {studentList.map((student) => (
+                        <TableRow key={student.id} className="hover:bg-gray-50">
+                          <TableCell className="font-medium">{student.id}</TableCell>
+                          <TableCell>{student.name}</TableCell>
+                          <TableCell>{student.class}</TableCell>
+                          <TableCell>
+                            <Badge className={getRiskBadgeColor('Moderate')}>
+                              Moderate
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getRiskBadgeColor('High')}>
+                              High
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getRiskBadgeColor('Low')}>
+                              Low
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getRiskBadgeColor(student.riskLevel)}>
+                              {student.riskLevel} Risk
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-500">{student.lastAssessment}</TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedStudent(student.id)}
+                            >
+                              View Details
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
 
-              {/* Aggregate Analytics */}
+              {/* Individual Student Progress */}
+              {selectedStudent && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Individual Student Progress - {selectedStudent}</CardTitle>
+                    <CardDescription>
+                      Risk history over time with comparison to school averages
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 mb-6">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={progressData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="date" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="depression" stroke="#ef4444" strokeWidth={2} name="Depression" />
+                          <Line type="monotone" dataKey="stress" stroke="#f97316" strokeWidth={2} name="Stress" />
+                          <Line type="monotone" dataKey="anxiety" stroke="#eab308" strokeWidth={2} name="Anxiety" />
+                          <Line type="monotone" dataKey="wellbeing" stroke="#22c55e" strokeWidth={2} name="Wellbeing" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <Card className="p-4">
+                        <h4 className="font-medium text-sm text-gray-600 mb-2">Student Average</h4>
+                        <div className="text-2xl font-bold text-blue-600">65%</div>
+                        <p className="text-xs text-gray-500">Risk Score</p>
+                      </Card>
+                      <Card className="p-4">
+                        <h4 className="font-medium text-sm text-gray-600 mb-2">School Average</h4>
+                        <div className="text-2xl font-bold text-gray-600">58%</div>
+                        <p className="text-xs text-gray-500">Risk Score</p>
+                      </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Aggregate Trends */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
@@ -299,6 +394,45 @@ const ProgressTracking = () => {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Intervention Tracking */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Intervention Tracking</CardTitle>
+                  <CardDescription>Notes and follow-ups for at-risk students</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-medium">Alex Johnson (ST001)</h4>
+                          <p className="text-sm text-gray-600">Counseling session scheduled</p>
+                        </div>
+                        <Badge className="bg-orange-100 text-orange-800">Follow-up Required</Badge>
+                      </div>
+                      <p className="text-sm text-gray-700">
+                        High stress levels detected. Parent meeting scheduled for next week.
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">Last updated: 2 days ago</p>
+                    </div>
+                    
+                    <div className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-medium">Sarah Smith (ST002)</h4>
+                          <p className="text-sm text-gray-600">Wellness check completed</p>
+                        </div>
+                        <Badge className="bg-green-100 text-green-800">Resolved</Badge>
+                      </div>
+                      <p className="text-sm text-gray-700">
+                        Student reported improved wellbeing after peer support group participation.
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">Last updated: 1 week ago</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             // Student View
@@ -368,6 +502,18 @@ const ProgressTracking = () => {
                                 <p className="text-sm text-gray-500">
                                   Completed on {new Date(assessment.completed_at).toLocaleDateString()}
                                 </p>
+                                {assessment.results && (
+                                  <div className="mt-2 flex flex-wrap gap-2">
+                                    {Object.entries(assessment.results).map(([category, score]) => (
+                                      <Badge 
+                                        key={category}
+                                        className={getRiskBadgeColor(getRiskLevel(score as number).split(' ')[0])}
+                                      >
+                                        {category}: {score}%
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                               <Badge variant="outline">
                                 {assessment.categories.length} {assessment.categories.length === 1 ? 'Category' : 'Categories'}
@@ -419,13 +565,13 @@ const ProgressTracking = () => {
                 </Card>
 
                 {/* Latest Results */}
-                {assessmentData.length > 0 && (
+                {assessmentData.length > 0 && assessmentData[assessmentData.length - 1].results && (
                   <Card>
                     <CardHeader>
                       <CardTitle>Latest Results</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {Object.entries(assessmentData[assessmentData.length - 1].results || {}).map(([category, percentage]) => (
+                      {Object.entries(assessmentData[assessmentData.length - 1].results as AssessmentResult).map(([category, percentage]) => (
                         <div key={category} className="space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-sm font-medium capitalize">{category}</span>
