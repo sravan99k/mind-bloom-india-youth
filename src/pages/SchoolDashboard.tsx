@@ -8,10 +8,18 @@ import HighRiskStudentsAlert from "@/components/HighRiskStudentsAlert";
 import SchoolAnalyticsDashboard from "@/components/SchoolAnalyticsDashboard";
 import { fetchStudentData, StudentData } from "@/services/studentDataService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/useAuth";
+import { AlertTriangle, ClipboardList } from "lucide-react";
 
 const SchoolDashboard = () => {
+  const { user } = useAuth();
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const isManagement = user?.role === 'management';
 
   useEffect(() => {
     const loadStudentData = async () => {
@@ -35,6 +43,53 @@ const SchoolDashboard = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!isManagement) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navigation />
+        <div className="py-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Alert className="border-orange-200 bg-orange-50">
+              <AlertTriangle className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-orange-800">
+                School Dashboard access is restricted to management users only. 
+                Students can access assessments and their personal dashboard.
+              </AlertDescription>
+            </Alert>
+            
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Access Denied</CardTitle>
+                <CardDescription>
+                  You need management privileges to access the school dashboard.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <Button 
+                    className="w-full bg-teal-500 hover:bg-teal-600"
+                    onClick={() => window.location.href = '/assessment'}
+                  >
+                    <ClipboardList className="w-4 h-4 mr-2" />
+                    Take Assessment
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.location.href = '/student-dashboard'}
+                  >
+                    Go to Student Dashboard
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, ClipboardList, School, BookOpen, User, LogOut, Settings, Bell, Users, BarChart3, FileText } from "lucide-react";
+import { Home, ClipboardList, School, BookOpen, User, LogOut, Settings, Bell, Users, BarChart3, FileText, TrendingUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,25 +20,26 @@ const Navigation = () => {
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
-  // Mock user type detection - in real app, this would come from user profile/role
-  const isSchoolAdmin = user?.email?.includes('school') || user?.email?.includes('admin');
+  const isManagement = user?.role === 'management';
+  const isStudent = user?.role === 'student';
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
     { name: "Assessment", path: "/assessment", icon: ClipboardList },
-    { name: "School Dashboard", path: "/school-dashboard", icon: School },
+    ...(isManagement ? [{ name: "School Dashboard", path: "/school-dashboard", icon: School }] : []),
     { name: "Resources", path: "/resources", icon: BookOpen },
   ];
 
   const studentMenuItems = [
     { name: "My Dashboard", path: "/student-dashboard", icon: BarChart3 },
-    { name: "My Assessments", path: "/assessment", icon: ClipboardList },
-    { name: "Profile Settings", path: "/profile", icon: Settings },
-    { name: "Help & Support", path: "/help", icon: User },
+    { name: "Progress Tracking", path: "/progress-tracking", icon: TrendingUp },
+    { name: "My Assessments", path: "/my-assessments", icon: ClipboardList },
+    { name: "Profile Settings", path: "/profile-settings", icon: Settings },
   ];
 
-  const schoolMenuItems = [
+  const managementMenuItems = [
     { name: "School Dashboard", path: "/school-dashboard", icon: School },
+    { name: "Progress Tracking", path: "/progress-tracking", icon: TrendingUp },
     { name: "Student Management", path: "/students", icon: Users },
     { name: "Analytics", path: "/analytics", icon: BarChart3 },
     { name: "Reports", path: "/reports", icon: FileText },
@@ -65,8 +66,15 @@ const Navigation = () => {
   };
 
   const getUserInitials = () => {
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name.charAt(0).toUpperCase();
+    }
     if (!user?.email) return "U";
     return user.email.charAt(0).toUpperCase();
+  };
+
+  const getUserName = () => {
+    return user?.user_metadata?.name || user?.email || "User";
   };
 
   return (
@@ -120,17 +128,17 @@ const Navigation = () => {
                     <DropdownMenuContent className="w-64 bg-white border shadow-lg z-50" align="end" forceMount>
                       <div className="flex items-center justify-start gap-2 p-2">
                         <div className="flex flex-col space-y-1 leading-none">
-                          <p className="font-medium text-sm">{user.email}</p>
+                          <p className="font-medium text-sm">{getUserName()}</p>
                           <p className="text-xs text-muted-foreground">
-                            {isSchoolAdmin ? "School Administrator" : "Student"}
+                            {isManagement ? "School Management" : isStudent ? "Student" : "User"}
                           </p>
                         </div>
                       </div>
                       <DropdownMenuSeparator />
                       
-                      {isSchoolAdmin ? (
+                      {isManagement ? (
                         <>
-                          {schoolMenuItems.map((item) => {
+                          {managementMenuItems.map((item) => {
                             const Icon = item.icon;
                             return (
                               <DropdownMenuItem key={item.path} asChild>
