@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -60,16 +61,16 @@ const ProfileSettings = () => {
         setProfileData({
           name: user.user_metadata?.name || "",
           email: user.email || "",
-          state: data.state || "",
-          city: data.city || "",
-          pincode: data.pincode || "",
+          state: (data as any).state || "",
+          city: (data as any).city || "",
+          pincode: (data as any).pincode || "",
           class: data.grade || "",
           gender: data.gender || "",
-          rollno: data.roll_no || "",
+          rollno: (data as any).roll_no || "",
           schoolName: data.school || "",
-          branch: data.branch || "",
-          parentName: data.parent_name || "",
-          parentPhone: data.parent_phone || ""
+          branch: (data as any).branch || "",
+          parentName: (data as any).parent_name || "",
+          parentPhone: (data as any).parent_phone || ""
         });
       }
     } catch (error) {
