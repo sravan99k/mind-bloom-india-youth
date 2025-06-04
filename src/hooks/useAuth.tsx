@@ -19,16 +19,20 @@ export const useAuth = () => {
         setSession(session);
         
         if (session?.user) {
-          // Fetch user role and demographics
-          const [roleResult, demoResult] = await Promise.all([
-            supabase.from('user_roles').select('role').eq('user_id', session.user.id).single(),
-            supabase.from('demographics').select('*').eq('user_id', session.user.id).single()
-          ]);
+          // Get user role from user metadata
+          const role = session.user.user_metadata?.role as 'student' | 'management';
+          
+          // Fetch demographics
+          const { data: demoData } = await supabase
+            .from('demographics')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
 
           const extendedUser: ExtendedUser = {
             ...session.user,
-            role: roleResult.data?.role,
-            demographics: demoResult.data
+            role: role,
+            demographics: demoData
           };
           
           setUser(extendedUser);
@@ -43,15 +47,20 @@ export const useAuth = () => {
       setSession(session);
       
       if (session?.user) {
-        const [roleResult, demoResult] = await Promise.all([
-          supabase.from('user_roles').select('role').eq('user_id', session.user.id).single(),
-          supabase.from('demographics').select('*').eq('user_id', session.user.id).single()
-        ]);
+        // Get user role from user metadata
+        const role = session.user.user_metadata?.role as 'student' | 'management';
+        
+        // Fetch demographics
+        const { data: demoData } = await supabase
+          .from('demographics')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
 
         const extendedUser: ExtendedUser = {
           ...session.user,
-          role: roleResult.data?.role,
-          demographics: demoResult.data
+          role: role,
+          demographics: demoData
         };
         
         setUser(extendedUser);

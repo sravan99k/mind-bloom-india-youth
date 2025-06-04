@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -128,7 +127,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
       }
 
       if (data.user) {
-        // Save demographics
+        // Save demographics with all the new fields
         const { error: demoError } = await supabase
           .from('demographics')
           .insert({
@@ -146,16 +145,8 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
             parent_phone: signupData.parentPhone,
           });
 
-        // Save user role
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: data.user.id,
-            role: signupData.role,
-          });
-
-        if (demoError || roleError) {
-          console.error('Error saving additional data:', demoError || roleError);
+        if (demoError) {
+          console.error('Error saving demographics:', demoError);
         }
 
         toast({
