@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import ProgressTracking from "./pages/ProgressTracking";
 import MyAssessments from "./pages/MyAssessments";
 import ProfileSettings from "./pages/ProfileSettings";
+import WellnessDashboard from "./pages/WellnessDashboard";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
         <Route path="/assessment" element={<Assessment />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/wellness-dashboard" element={<WellnessDashboard />} />
         <Route path="/school-dashboard" element={<SchoolDashboard />} />
         <Route path="/progress-tracking" element={<ProgressTracking />} />
         <Route path="/my-assessments" element={<MyAssessments />} />
