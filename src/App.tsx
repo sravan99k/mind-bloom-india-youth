@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -14,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import ProgressTracking from "./pages/ProgressTracking";
 import MyAssessments from "./pages/MyAssessments";
 import ProfileSettings from "./pages/ProfileSettings";
+import WellnessDashboard from "./pages/WellnessDashboard";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +31,7 @@ const App = () => (
         <Route path="/progress-tracking" element={<ProgressTracking />} />
         <Route path="/my-assessments" element={<MyAssessments />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
+        <Route path="/wellness-dashboard" element={<WellnessDashboard />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
