@@ -1,268 +1,190 @@
 
-import { useState } from "react";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Home, ClipboardList, School, BookOpen, User, LogOut, Settings, Bell, Users, BarChart3, FileText, TrendingUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Menu, X, Heart, User, LogOut, Settings, BarChart3, BookOpen, MessageCircle, Sparkles } from "lucide-react";
 
 const Navigation = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+  const isManagement = user?.role === 'management';
+  const isStudent = user?.role === 'student';
+
+  const navItems = [
+    { name: "Home", path: "/", icon: Home },
+    { name: "Assessment", path: "/assessment", icon: ClipboardList },
+    ...(isManagement ? [{ name: "School Dashboard", path: "/school-dashboard", icon: School }] : []),
+    { name: "Resources", path: "/resources", icon: BookOpen },
+  ];
+
+  const studentMenuItems = [
+    { name: "My Dashboard", path: "/student-dashboard", icon: BarChart3 },
+    { name: "Progress Tracking", path: "/progress-tracking", icon: TrendingUp },
+    { name: "My Assessments", path: "/my-assessments", icon: ClipboardList },
+    { name: "Profile Settings", path: "/profile-settings", icon: Settings },
+  ];
+
+  const managementMenuItems = [
+    { name: "School Dashboard", path: "/school-dashboard", icon: School },
+    { name: "Progress Tracking", path: "/progress-tracking", icon: TrendingUp },
+    { name: "Student Management", path: "/students", icon: Users },
+    { name: "Analytics", path: "/analytics", icon: BarChart3 },
+    { name: "Reports", path: "/reports", icon: FileText },
+    { name: "Alerts & Notifications", path: "/alerts", icon: Bell },
+    { name: "School Settings", path: "/school-settings", icon: Settings },
+  ];
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account.",
+      });
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to sign out. Please try again.",
+        description: "Failed to log out. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-      window.location.href = "/";
     }
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const getUserInitials = () => {
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name.charAt(0).toUpperCase();
+    }
+    if (!user?.email) return "U";
+    return user.email.charAt(0).toUpperCase();
   };
 
-  if (loading) {
-    return (
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Heart className="h-8 w-8 text-teal-500" />
-              <span className="ml-2 text-xl font-bold text-gray-900">NovoHealth</span>
-            </div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
+  const getUserName = () => {
+    return user?.user_metadata?.name || user?.email || "User";
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <a href="/" className="flex items-center">
-              <Heart className="h-8 w-8 text-teal-500" />
-              <span className="ml-2 text-xl font-bold text-gray-900">NovoHealth</span>
-            </a>
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
+            </div>
+            <span className="text-xl font-semibold text-gray-900">NovoHealth</span>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link key={item.path} to={item.path}>
+                  <Button
+                    variant={isActive ? "default" : "ghost"}
+                    className={`flex items-center space-x-2 ${
+                      isActive 
+                        ? "bg-teal-500 text-white hover:bg-teal-600" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{item.name}</span>
+                  </Button>
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            {user ? (
+          <div className="flex items-center space-x-2">
+            {!loading && (
               <>
-                <a
-                  href="/wellness-dashboard"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md transition-colors"
-                >
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  Wellness Hub
-                </a>
-                <a
-                  href="/assessment"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md transition-colors"
-                >
-                  <BarChart3 className="w-4 h-4 mr-1" />
-                  Assessment
-                </a>
-                <a
-                  href="/resources"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md transition-colors"
-                >
-                  <BookOpen className="w-4 h-4 mr-1" />
-                  Resources
-                </a>
-                {user.role === 'student' ? (
-                  <a
-                    href="/student-dashboard"
-                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md transition-colors"
-                  >
-                    <User className="w-4 h-4 mr-1" />
-                    Dashboard
-                  </a>
+                {user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src="" alt="Profile" />
+                          <AvatarFallback className="bg-teal-500 text-white">
+                            {getUserInitials()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-64 bg-white border shadow-lg z-50" align="end" forceMount>
+                      <div className="flex items-center justify-start gap-2 p-2">
+                        <div className="flex flex-col space-y-1 leading-none">
+                          <p className="font-medium text-sm">{getUserName()}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {isManagement ? "School Management" : isStudent ? "Student" : "User"}
+                          </p>
+                        </div>
+                      </div>
+                      <DropdownMenuSeparator />
+                      
+                      {isManagement ? (
+                        <>
+                          {managementMenuItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                              <DropdownMenuItem key={item.path} asChild>
+                                <Link to={item.path} className="flex items-center space-x-2 w-full">
+                                  <Icon className="w-4 h-4" />
+                                  <span>{item.name}</span>
+                                </Link>
+                              </DropdownMenuItem>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <>
+                          {studentMenuItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                              <DropdownMenuItem key={item.path} asChild>
+                                <Link to={item.path} className="flex items-center space-x-2 w-full">
+                                  <Icon className="w-4 h-4" />
+                                  <span>{item.name}</span>
+                                </Link>
+                              </DropdownMenuItem>
+                            );
+                          })}
+                        </>
+                      )}
+                      
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                        <LogOut className="w-4 h-4 mr-2" />
+                        <span>Log out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
-                  <a
-                    href="/school-dashboard"
-                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md transition-colors"
-                  >
-                    <BarChart3 className="w-4 h-4 mr-1" />
-                    School Dashboard
-                  </a>
+                  <Link to="/auth">
+                    <Button size="sm" className="bg-teal-500 hover:bg-teal-600">
+                      <User className="w-4 h-4 mr-2" />
+                      Login
+                    </Button>
+                  </Link>
                 )}
-                <div className="flex items-center space-x-2 border-l pl-4">
-                  <a
-                    href="/profile-settings"
-                    className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-50 rounded-full transition-colors"
-                  >
-                    <Settings className="w-5 h-5" />
-                  </a>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-50 rounded-full"
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <>
-                <a
-                  href="/assessment"
-                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 transition-colors"
-                >
-                  Assessment
-                </a>
-                <a
-                  href="/resources"
-                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-teal-600 transition-colors"
-                >
-                  Resources
-                </a>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.location.href = "/auth"}
-                  className="border-teal-300 text-teal-700 hover:bg-teal-50"
-                >
-                  Sign In
-                </Button>
               </>
             )}
           </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleMenu}
-              className="p-2"
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
-          </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="space-y-1">
-              {user ? (
-                <>
-                  <a
-                    href="/wellness-dashboard"
-                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Wellness Hub
-                  </a>
-                  <a
-                    href="/assessment"
-                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <BarChart3 className="w-5 h-5 mr-2" />
-                    Assessment
-                  </a>
-                  <a
-                    href="/resources"
-                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <BookOpen className="w-5 h-5 mr-2" />
-                    Resources
-                  </a>
-                  {user.role === 'student' ? (
-                    <a
-                      href="/student-dashboard"
-                      className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <User className="w-5 h-5 mr-2" />
-                      Dashboard
-                    </a>
-                  ) : (
-                    <a
-                      href="/school-dashboard"
-                      className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <BarChart3 className="w-5 h-5 mr-2" />
-                      School Dashboard
-                    </a>
-                  )}
-                  <div className="border-t border-gray-200 pt-4 mt-4">
-                    <a
-                      href="/profile-settings"
-                      className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Settings className="w-5 h-5 mr-2" />
-                      Settings
-                    </a>
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setIsMenuOpen(false);
-                      }}
-                      className="flex items-center w-full px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    >
-                      <LogOut className="w-5 h-5 mr-2" />
-                      Sign Out
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <a
-                    href="/assessment"
-                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Assessment
-                  </a>
-                  <a
-                    href="/resources"
-                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Resources
-                  </a>
-                  <div className="pt-4">
-                    <Button
-                      variant="outline"
-                      className="w-full border-teal-300 text-teal-700 hover:bg-teal-50"
-                      onClick={() => {
-                        window.location.href = "/auth";
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      Sign In
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );
