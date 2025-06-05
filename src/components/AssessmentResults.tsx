@@ -2,7 +2,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
 
 interface AssessmentResultsProps {
   results: any;
@@ -12,7 +11,10 @@ interface AssessmentResultsProps {
 
 const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentResultsProps) => {
   const calculatePercentage = (category: string) => {
-    // Rule-based percentage calculation for each category
+    if (results && results[category]) {
+      return results[category];
+    }
+    
     const categoryRules = {
       depression: 75,
       stress: 60,
@@ -71,19 +73,15 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Large Percentage Display */}
               <div className="text-center mb-6">
                 <div className="text-8xl font-bold text-gray-900 mb-2">{percentage}%</div>
                 <p className="text-lg text-gray-600">Risk Level Assessment</p>
               </div>
               
-              {/* Color-coded Risk Slider */}
               <div className="space-y-4">
                 <h4 className="font-semibold text-gray-800">Risk Scale</h4>
                 <div className="relative">
-                  {/* Background gradient slider track */}
                   <div className="h-6 w-full rounded-full relative overflow-hidden bg-gradient-to-r from-green-400 via-yellow-400 to-red-400">
-                    {/* Current position indicator */}
                     <div 
                       className="absolute top-0 h-full w-1 bg-gray-900 border-2 border-white rounded-full shadow-lg transition-all duration-500 z-10"
                       style={{ 
@@ -97,7 +95,6 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
                     </div>
                   </div>
                   
-                  {/* Labels */}
                   <div className="flex justify-between text-sm font-medium mt-3">
                     <span className="text-green-600">Low Risk (0-39%)</span>
                     <span className="text-yellow-600">Moderate Risk (40-69%)</span>
@@ -106,7 +103,6 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Assessment Score</span>
@@ -121,7 +117,6 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
                 </div>
               </div>
 
-              {/* Recommendation based on risk level */}
               <div className={`p-4 rounded-lg ${risk.bgColor}`}>
                 <h5 className={`font-semibold ${risk.color} mb-2`}>Recommendation</h5>
                 <p className="text-sm text-gray-700">
@@ -135,7 +130,6 @@ const AssessmentResults = ({ results, categories, onTakeAnother }: AssessmentRes
         );
       })}
 
-      {/* Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-gradient-to-r from-teal-50 to-blue-50 border-teal-200">
           <CardHeader>
