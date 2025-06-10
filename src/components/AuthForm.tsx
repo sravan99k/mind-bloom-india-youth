@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,9 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     branch: "",
     // Management specific fields
     parentName: "",
-    parentPhone: ""
+    parentPhone: "",
+    totalStudents: "",
+    schoolAddress: ""
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -97,7 +100,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     if (!signupData.role) {
       toast({
         title: "Role Required",
-        description: "Please select your role (Student or Management).",
+        description: "Please select your role (Student or School Management).",
         variant: "destructive",
       });
       return;
@@ -127,7 +130,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
       }
 
       if (data.user) {
-        // Save demographics with all the new fields
+        // Save demographics with all the fields
         const { error: demoError } = await supabase
           .from('demographics')
           .insert({
@@ -143,6 +146,8 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
             branch: signupData.branch,
             parent_name: signupData.parentName,
             parent_phone: signupData.parentPhone,
+            total_students: signupData.totalStudents,
+            school_address: signupData.schoolAddress,
           });
 
         if (demoError) {
@@ -321,26 +326,6 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         disabled={loading}
                       />
                     </div>
-                    {signupData.role === 'student' && (
-                      <div className="space-y-2">
-                        <Label htmlFor="class">Class</Label>
-                        <Select onValueChange={(value) => setSignupData({...signupData, class: value})} disabled={loading}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your class" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="6">Class 6</SelectItem>
-                            <SelectItem value="7">Class 7</SelectItem>
-                            <SelectItem value="8">Class 8</SelectItem>
-                            <SelectItem value="9">Class 9</SelectItem>
-                            <SelectItem value="10">Class 10</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="space-y-2">
                       <Label htmlFor="gender">Gender</Label>
                       <Select onValueChange={(value) => setSignupData({...signupData, gender: value})} disabled={loading}>
@@ -355,18 +340,6 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         </SelectContent>
                       </Select>
                     </div>
-                    {signupData.role === 'student' && (
-                      <div className="space-y-2">
-                        <Label htmlFor="rollno">Roll Number</Label>
-                        <Input
-                          id="rollno"
-                          value={signupData.rollno}
-                          onChange={(e) => setSignupData({...signupData, rollno: e.target.value})}
-                          required
-                          disabled={loading}
-                        />
-                      </div>
-                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -382,37 +355,94 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     </div>
                     {signupData.role === 'student' && (
                       <div className="space-y-2">
-                        <Label htmlFor="branch">Branch/Stream</Label>
-                        <Input
-                          id="branch"
-                          value={signupData.branch}
-                          onChange={(e) => setSignupData({...signupData, branch: e.target.value})}
-                          placeholder="Enter branch/stream"
-                          disabled={loading}
-                        />
+                        <Label htmlFor="class">Class</Label>
+                        <Select onValueChange={(value) => setSignupData({...signupData, class: value})} disabled={loading}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your class" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="6">Class 6</SelectItem>
+                            <SelectItem value="7">Class 7</SelectItem>
+                            <SelectItem value="8">Class 8</SelectItem>
+                            <SelectItem value="9">Class 9</SelectItem>
+                            <SelectItem value="10">Class 10</SelectItem>
+                            <SelectItem value="11">Class 11</SelectItem>
+                            <SelectItem value="12">Class 12</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     )}
                   </div>
 
                   {signupData.role === 'student' && (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="rollno">Roll Number</Label>
+                          <Input
+                            id="rollno"
+                            value={signupData.rollno}
+                            onChange={(e) => setSignupData({...signupData, rollno: e.target.value})}
+                            required
+                            disabled={loading}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="branch">Branch/Stream</Label>
+                          <Input
+                            id="branch"
+                            value={signupData.branch}
+                            onChange={(e) => setSignupData({...signupData, branch: e.target.value})}
+                            placeholder="Enter branch/stream"
+                            disabled={loading}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="parentName">Parent/Guardian Name</Label>
+                          <Input
+                            id="parentName"
+                            value={signupData.parentName}
+                            onChange={(e) => setSignupData({...signupData, parentName: e.target.value})}
+                            required
+                            disabled={loading}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="parentPhone">Parent/Guardian Phone</Label>
+                          <Input
+                            id="parentPhone"
+                            value={signupData.parentPhone}
+                            onChange={(e) => setSignupData({...signupData, parentPhone: e.target.value})}
+                            required
+                            disabled={loading}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {signupData.role === 'management' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="space-y-2">
-                        <Label htmlFor="parentName">Parent/Guardian Name</Label>
+                        <Label htmlFor="totalStudents">Total Students</Label>
                         <Input
-                          id="parentName"
-                          value={signupData.parentName}
-                          onChange={(e) => setSignupData({...signupData, parentName: e.target.value})}
-                          required
+                          id="totalStudents"
+                          value={signupData.totalStudents}
+                          onChange={(e) => setSignupData({...signupData, totalStudents: e.target.value})}
+                          placeholder="Number of students"
                           disabled={loading}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="parentPhone">Parent/Guardian Phone</Label>
+                        <Label htmlFor="schoolAddress">School Address</Label>
                         <Input
-                          id="parentPhone"
-                          value={signupData.parentPhone}
-                          onChange={(e) => setSignupData({...signupData, parentPhone: e.target.value})}
-                          required
+                          id="schoolAddress"
+                          value={signupData.schoolAddress}
+                          onChange={(e) => setSignupData({...signupData, schoolAddress: e.target.value})}
+                          placeholder="Complete school address"
                           disabled={loading}
                         />
                       </div>

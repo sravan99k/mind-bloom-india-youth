@@ -3,19 +3,30 @@ import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ClipboardList, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { Calendar, FileText, TrendingUp } from "lucide-react";
+import { Navigate } from "react-router-dom";
+
+interface AssessmentResponse {
+  id: string;
+  categories: string[];
+  completed_at: string;
+  responses: any;
+  results: any;
+}
 
 const MyAssessments = () => {
-  const { user } = useAuth();
-  const [assessments, setAssessments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
+  const [assessments, setAssessments] = useState<AssessmentResponse[]>([]);
+  const [assessmentLoading, setAssessmentLoading] = useState(true);
 
   useEffect(() => {
-    loadAssessments();
+    if (user) {
+      loadAssessments();
+    }
   }, [user]);
 
   const loadAssessments = async () => {
@@ -29,25 +40,12 @@ const MyAssessments = () => {
         .order('completed_at', { ascending: false });
 
       if (error) throw error;
-
       setAssessments(data || []);
     } catch (error) {
       console.error('Error loading assessments:', error);
     } finally {
-      setLoading(false);
+      setAssessmentLoading(false);
     }
-  };
-
-  const getCategoryBadgeColor = (category: string) => {
-    const colors = {
-      depression: "bg-red-100 text-red-800",
-      stress: "bg-orange-100 text-orange-800",
-      anxiety: "bg-yellow-100 text-yellow-800",
-      adhd: "bg-blue-100 text-blue-800",
-      wellbeing: "bg-green-100 text-green-800",
-      overall: "bg-purple-100 text-purple-800"
-    };
-    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   if (loading) {
@@ -55,11 +53,30 @@ const MyAssessments = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your assessments...</p>
+          <p className="text-gray-600">Loading assessments...</p>
         </div>
       </div>
     );
   }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  const getRiskBadgeColor = (level: string) => {
+    switch (level) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Moderate': return 'bg-yellow-100 text-yellow-800';
+      case 'Low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getRiskLevel = (percentage: number) => {
+    if (percentage >= 70) return "High Risk";
+    if (percentage >= 40) return "Moderate Risk";
+    return "Low Risk";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -73,163 +90,150 @@ const MyAssessments = () => {
             </p>
           </div>
 
-          {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Assessments</CardTitle>
-                <ClipboardList className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{assessments.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  Completed assessments
-                </p>
-              </CardContent>
-            </Card>
+          {assessmentLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading your assessments...</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Summary Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Assessments</CardTitle>
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{assessments.length}</div>
+                    <p className="text-xs text-muted-foreground">
+                      Completed assessments
+                    </p>
+                  </CardContent>
+                </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">This Month</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {assessments.filter(a => 
-                    new Date(a.completed_at).getMonth() === new Date().getMonth()
-                  ).length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Recent assessments
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Last Assessment</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {assessments.length > 0 
-                    ? new Date(assessments[0].completed_at).toLocaleDateString()
-                    : "None"
-                  }
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Most recent completion
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Assessment History */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Assessment History</CardTitle>
-              <CardDescription>
-                Detailed view of all your completed assessments
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {assessments.length === 0 ? (
-                <div className="text-center py-8">
-                  <ClipboardList className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No assessments yet</h3>
-                  <p className="text-gray-600 mb-4">
-                    Start your mental health journey by taking your first assessment.
-                  </p>
-                  <Button className="bg-teal-500 hover:bg-teal-600">
-                    Take Assessment
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {assessments.map((assessment, index) => (
-                    <div key={assessment.id} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-2">
-                            Assessment #{assessments.length - index}
-                          </h3>
-                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                            <Calendar className="w-4 h-4" />
-                            <span>{new Date(assessment.completed_at).toLocaleDateString()}</span>
-                            <span>•</span>
-                            <span>{new Date(assessment.completed_at).toLocaleTimeString()}</span>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </Button>
-                      </div>
-
-                      <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Categories Assessed:</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {assessment.categories.map((category: string) => (
-                            <Badge 
-                              key={category} 
-                              variant="secondary"
-                              className={getCategoryBadgeColor(category)}
-                            >
-                              {category.charAt(0).toUpperCase() + category.slice(1)}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Questions Answered:</h4>
-                        <p className="text-sm text-gray-600">
-                          {Object.keys(assessment.responses || {}).length} questions completed
-                        </p>
-                      </div>
-
-                      {assessment.results && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">Risk Scores:</h4>
-                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                            {Object.entries(assessment.results).map(([category, score]) => (
-                              <div key={category} className="text-center">
-                                <div className="text-lg font-bold text-gray-900">{score as number}%</div>
-                                <div className="text-xs text-gray-600 capitalize">{category}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Latest Assessment</CardTitle>
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {assessments.length > 0 
+                        ? new Date(assessments[0].completed_at).toLocaleDateString()
+                        : 'No assessments'
+                      }
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <p className="text-xs text-muted-foreground">
+                      Most recent completion
+                    </p>
+                  </CardContent>
+                </Card>
 
-          {/* Quick Actions */}
-          <Card className="mt-8 bg-gradient-to-r from-teal-50 to-blue-50 border-teal-200">
-            <CardHeader>
-              <CardTitle className="text-teal-800">Ready for Your Next Assessment?</CardTitle>
-              <CardDescription className="text-teal-600">
-                Regular assessments help track your mental health progress over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-3">
-                <Button className="bg-teal-500 hover:bg-teal-600">
-                  Take New Assessment
-                </Button>
-                <Button variant="outline" className="border-teal-300 text-teal-700 hover:bg-teal-50">
-                  View Progress
-                </Button>
-                <Button variant="outline" className="border-teal-300 text-teal-700 hover:bg-teal-50">
-                  Browse Resources
-                </Button>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Categories Assessed</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {[...new Set(assessments.flatMap(a => a.categories))].length}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Different categories
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Assessment History */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Assessment History</CardTitle>
+                  <CardDescription>
+                    Your complete assessment history with questions, answers, and results
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {assessments.length > 0 ? (
+                    <div className="space-y-6">
+                      {assessments.map((assessment, index) => (
+                        <div key={assessment.id} className="border rounded-lg p-6 space-y-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold text-lg">
+                                Assessment #{assessments.length - index}
+                              </h3>
+                              <p className="text-sm text-gray-500">
+                                Completed on {new Date(assessment.completed_at).toLocaleDateString()} at{' '}
+                                {new Date(assessment.completed_at).toLocaleTimeString()}
+                              </p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {assessment.categories.map((category: string) => (
+                                <Badge key={category} variant="outline" className="capitalize">
+                                  {category}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Results */}
+                          {assessment.results && (
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                              <h4 className="font-medium mb-3">Results</h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {Object.entries(assessment.results).map(([category, score]) => (
+                                  <div key={category} className="flex items-center justify-between">
+                                    <span className="capitalize font-medium">{category}:</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold">{score}%</span>
+                                      <Badge className={getRiskBadgeColor(getRiskLevel(score as number).split(' ')[0])}>
+                                        {getRiskLevel(score as number)}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Questions and Answers */}
+                          {assessment.responses && (
+                            <div className="space-y-3">
+                              <h4 className="font-medium">Questions & Answers</h4>
+                              <div className="max-h-60 overflow-y-auto space-y-3">
+                                {Object.entries(assessment.responses).map(([question, answer], qIndex) => (
+                                  <div key={qIndex} className="bg-white p-3 border rounded">
+                                    <p className="font-medium text-sm mb-2">Q{qIndex + 1}: {question}</p>
+                                    <p className="text-sm text-gray-700">Answer: {String(answer)}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No assessments yet</h3>
+                      <p className="text-gray-500 mb-4">
+                        You haven't completed any assessments yet. Take your first assessment to start tracking your mental health.
+                      </p>
+                      <Button 
+                        className="bg-teal-500 hover:bg-teal-600"
+                        onClick={() => window.location.href = '/assessment'}
+                      >
+                        Take Your First Assessment
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
       <Footer />

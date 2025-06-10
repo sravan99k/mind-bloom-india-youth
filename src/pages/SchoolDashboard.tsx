@@ -13,14 +13,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
-import { AlertTriangle, ClipboardList, Brain } from "lucide-react";
+import { AlertTriangle, ClipboardList, Brain, BarChart3, Users } from "lucide-react";
+import { Navigate } from "react-router-dom";
 
 const SchoolDashboard = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [students, setStudents] = useState<StudentData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const isManagement = user?.role === 'management';
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     const loadStudentData = async () => {
@@ -30,12 +29,14 @@ const SchoolDashboard = () => {
       } catch (error) {
         console.error('Error loading student data:', error);
       } finally {
-        setLoading(false);
+        setDataLoading(false);
       }
     };
 
-    loadStudentData();
-  }, []);
+    if (user?.role === 'management') {
+      loadStudentData();
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -48,7 +49,11 @@ const SchoolDashboard = () => {
     );
   }
 
-  if (!isManagement) {
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (user.role !== 'management') {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navigation />
@@ -110,14 +115,27 @@ const SchoolDashboard = () => {
           </div>
           
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="overview">
+                <Users className="h-4 w-4 mr-2" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="analytics">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </TabsTrigger>
               <TabsTrigger value="ai-detection">
                 <Brain className="h-4 w-4 mr-2" />
                 AI Detection
               </TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="alerts">High-Risk Alerts</TabsTrigger>
+              <TabsTrigger value="alerts">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                High-Risk Alerts
+              </TabsTrigger>
+              <TabsTrigger value="progress">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Progress Tracking
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
@@ -131,16 +149,36 @@ const SchoolDashboard = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="ai-detection" className="space-y-6">
-              <EarlyRiskDetection />
-            </TabsContent>
-
             <TabsContent value="analytics" className="space-y-6">
               <SchoolAnalyticsDashboard students={students} />
             </TabsContent>
 
+            <TabsContent value="ai-detection" className="space-y-6">
+              <EarlyRiskDetection />
+            </TabsContent>
+
             <TabsContent value="alerts" className="space-y-6">
               <HighRiskStudentsAlert students={students} />
+            </TabsContent>
+
+            <TabsContent value="progress" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Progress Tracking</CardTitle>
+                  <CardDescription>
+                    View detailed progress tracking for all students in your school
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    className="bg-teal-500 hover:bg-teal-600"
+                    onClick={() => window.location.href = '/progress-tracking'}
+                  >
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Go to Progress Tracking
+                  </Button>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
