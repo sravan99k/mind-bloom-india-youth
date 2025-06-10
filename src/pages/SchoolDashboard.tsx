@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { AlertTriangle, ClipboardList, Brain, BarChart3, Users } from "lucide-react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 const SchoolDashboard = () => {
   const { user, loading } = useAuth();
@@ -78,17 +78,21 @@ const SchoolDashboard = () => {
                 <div className="space-y-3">
                   <Button 
                     className="w-full bg-teal-500 hover:bg-teal-600"
-                    onClick={() => window.location.href = '/assessment'}
+                    asChild
                   >
-                    <ClipboardList className="w-4 h-4 mr-2" />
-                    Take Assessment
+                    <Link to="/assessment">
+                      <ClipboardList className="w-4 h-4 mr-2" />
+                      Take Assessment
+                    </Link>
                   </Button>
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => window.location.href = '/student-dashboard'}
+                    asChild
                   >
-                    Go to Student Dashboard
+                    <Link to="/student-dashboard">
+                      Go to Student Dashboard
+                    </Link>
                   </Button>
                 </div>
               </CardContent>
@@ -172,10 +176,12 @@ const SchoolDashboard = () => {
                 <CardContent>
                   <Button 
                     className="bg-teal-500 hover:bg-teal-600"
-                    onClick={() => window.location.href = '/progress-tracking'}
+                    asChild
                   >
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Go to Progress Tracking
+                    <Link to="/progress-tracking">
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      Go to Progress Tracking
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

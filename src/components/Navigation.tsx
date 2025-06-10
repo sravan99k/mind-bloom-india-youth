@@ -6,10 +6,12 @@ import { Heart, BookOpen, BarChart3, Users, User, Settings, LogOut, Home, Brain 
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -18,7 +20,7 @@ const Navigation = () => {
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
-      window.location.href = "/";
+      navigate("/");
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -41,10 +43,10 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-teal-500" />
               <span className="text-xl font-bold text-gray-900">NovoHealth</span>
-            </div>
+            </Link>
           </div>
 
           {/* Navigation Menu */}
@@ -52,20 +54,20 @@ const Navigation = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <a href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link to="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                     <Home className="h-4 w-4 mr-2" />
                     Home
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               {user && (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <a href="/assessment" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link to="/assessment" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                       <Brain className="h-4 w-4 mr-2" />
                       Assessment
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
@@ -73,30 +75,30 @@ const Navigation = () => {
               {user && !isManagement && (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <a href="/wellness-dashboard" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link to="/wellness-dashboard" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                       <Heart className="h-4 w-4 mr-2" />
                       Wellness
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <a href="/resources" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link to="/resources" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                     <BookOpen className="h-4 w-4 mr-2" />
                     Resources
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 
               {user && (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <a href="/progress-tracking" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                    <Link to="/progress-tracking" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
                       <BarChart3 className="h-4 w-4 mr-2" />
                       Progress
-                    </a>
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
@@ -111,16 +113,16 @@ const Navigation = () => {
                     <div className="grid w-[200px] p-2">
                       {!isManagement && (
                         <NavigationMenuLink asChild>
-                          <a href="/student-dashboard" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
+                          <Link to="/student-dashboard" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                             Student Dashboard
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       )}
                       {isManagement && (
                         <NavigationMenuLink asChild>
-                          <a href="/school-dashboard" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
+                          <Link to="/school-dashboard" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                             School Dashboard
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       )}
                     </div>
@@ -150,17 +152,17 @@ const Navigation = () => {
                           {isManagement ? 'School Management' : 'Student'}
                         </div>
                         <NavigationMenuLink asChild>
-                          <a href="/profile-settings" className="flex items-center gap-2 select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
+                          <Link to="/profile-settings" className="flex items-center gap-2 select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                             <Settings className="w-4 h-4" />
                             Personal Settings
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                         {!isManagement && (
                           <NavigationMenuLink asChild>
-                            <a href="/progress-tracking" className="flex items-center gap-2 select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
+                            <Link to="/my-assessments" className="flex items-center gap-2 select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900">
                               <BarChart3 className="w-4 h-4" />
-                              Progress Tracking
-                            </a>
+                              My Assessments
+                            </Link>
                           </NavigationMenuLink>
                         )}
                         <button 
@@ -178,13 +180,13 @@ const Navigation = () => {
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
-                  <a href="/auth">
+                  <Link to="/auth">
                     <User className="h-4 w-4 mr-2" />
                     Sign In
-                  </a>
+                  </Link>
                 </Button>
                 <Button size="sm" asChild>
-                  <a href="/auth?action=signup">Sign Up</a>
+                  <Link to="/auth?action=signup">Sign Up</Link>
                 </Button>
               </>
             )}

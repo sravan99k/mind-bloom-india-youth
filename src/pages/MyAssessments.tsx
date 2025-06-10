@@ -78,6 +78,16 @@ const MyAssessments = () => {
     return "Low Risk";
   };
 
+  const formatAnswerValue = (value: unknown): string => {
+    if (value === null || value === undefined) return 'No answer';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+    if (Array.isArray(value)) return value.join(', ');
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -206,7 +216,7 @@ const MyAssessments = () => {
                                 {Object.entries(assessment.responses).map(([question, answer], qIndex) => (
                                   <div key={qIndex} className="bg-white p-3 border rounded">
                                     <p className="font-medium text-sm mb-2">Q{qIndex + 1}: {question}</p>
-                                    <p className="text-sm text-gray-700">Answer: {String(answer)}</p>
+                                    <p className="text-sm text-gray-700">Answer: {formatAnswerValue(answer)}</p>
                                   </div>
                                 ))}
                               </div>
