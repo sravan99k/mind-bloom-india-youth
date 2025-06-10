@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -67,7 +66,17 @@ const ProgressTracking = () => {
 
       if (error) throw error;
 
-      setAssessmentData(data || []);
+      // Transform the data to match our interface
+      const transformedData: AssessmentData[] = (data || []).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        categories: item.categories,
+        responses: item.responses,
+        results: item.results as AssessmentResult || undefined,
+        completed_at: item.completed_at
+      }));
+
+      setAssessmentData(transformedData);
     } catch (error) {
       console.error('Error loading assessment data:', error);
     } finally {
