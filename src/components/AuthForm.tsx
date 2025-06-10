@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface AuthFormProps {
   onAuthComplete: () => void;
@@ -38,6 +39,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +65,17 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
+        
+        // Get user role to redirect appropriately
+        const role = data.user.user_metadata?.role;
+        
+        // Navigate based on role
+        if (role === 'management') {
+          navigate('/school-dashboard');
+        } else {
+          navigate('/student-dashboard');
+        }
+        
         onAuthComplete();
       }
     } catch (error) {
@@ -158,6 +171,14 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
           title: "Account Created!",
           description: "Your account has been created successfully. You can now access the platform.",
         });
+
+        // Navigate based on role
+        if (signupData.role === 'management') {
+          navigate('/school-dashboard');
+        } else {
+          navigate('/student-dashboard');
+        }
+        
         onAuthComplete();
       }
     } catch (error) {

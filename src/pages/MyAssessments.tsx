@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, FileText, TrendingUp } from "lucide-react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface AssessmentResponse {
   id: string;
@@ -22,6 +22,7 @@ const MyAssessments = () => {
   const { user, loading } = useAuth();
   const [assessments, setAssessments] = useState<AssessmentResponse[]>([]);
   const [assessmentLoading, setAssessmentLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -86,6 +87,10 @@ const MyAssessments = () => {
     if (Array.isArray(value)) return value.join(', ');
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
+  };
+
+  const handleTakeAssessment = () => {
+    navigate('/assessment');
   };
 
   return (
@@ -197,7 +202,7 @@ const MyAssessments = () => {
                                   <div key={category} className="flex items-center justify-between">
                                     <span className="capitalize font-medium">{category}:</span>
                                     <div className="flex items-center gap-2">
-                                      <span className="font-bold">{score}%</span>
+                                      <span className="font-bold">{score as number}%</span>
                                       <Badge className={getRiskBadgeColor(getRiskLevel(score as number).split(' ')[0])}>
                                         {getRiskLevel(score as number)}
                                       </Badge>
@@ -234,7 +239,7 @@ const MyAssessments = () => {
                       </p>
                       <Button 
                         className="bg-teal-500 hover:bg-teal-600"
-                        onClick={() => window.location.href = '/assessment'}
+                        onClick={handleTakeAssessment}
                       >
                         Take Your First Assessment
                       </Button>

@@ -14,59 +14,72 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        
-        if (session?.user) {
-          // Get user role from user metadata
-          const role = session.user.user_metadata?.role as 'student' | 'management';
-          
-          // Fetch demographics
-          const { data: demoData } = await supabase
-            .from('demographics')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .single();
-
-          const extendedUser: ExtendedUser = {
-            ...session.user,
-            role: role,
-            demographics: demoData
-          };
-          
-          setUser(extendedUser);
-        } else {
-          setUser(null);
-        }
+    // Get initial session
+    const getSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error);
         setLoading(false);
+        return;
       }
-    );
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
       
       if (session?.user) {
+        await handleUser(session.user, session);
+      } else {
+        setUser(null);
+        setSession(null);
+        setLoading(false);
+      }
+    };
+
+    const handleUser = async (authUser: User, authSession: Session) => {
+      try {
         // Get user role from user metadata
-        const role = session.user.user_metadata?.role as 'student' | 'management';
+        const role = authUser.user_metadata?.role as 'student' | 'management';
         
         // Fetch demographics
         const { data: demoData } = await supabase
           .from('demographics')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('user_id', authUser.id)
           .single();
 
         const extendedUser: ExtendedUser = {
-          ...session.user,
+          ...authUser,
           role: role,
           demographics: demoData
         };
         
         setUser(extendedUser);
+        setSession(authSession);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setUser({
+          ...authUser,
+          role: authUser.user_metadata?.role as 'student' | 'management'
+        });
+        setSession(authSession);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    };
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+        
+        if (session?.user) {
+          await handleUser(session.user, session);
+        } else {
+          setUser(null);
+          setSession(null);
+          setLoading(false);
+        }
+      }
+    );
+
+    getSession();
 
     return () => subscription.unsubscribe();
   }, []);

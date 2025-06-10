@@ -19,12 +19,13 @@ const Auth = () => {
     );
   }
 
-  if (user && authComplete) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (user) {
-    return <Navigate to="/" replace />;
+  if (user && !loading) {
+    // Redirect based on user role
+    if (user.role === 'management') {
+      return <Navigate to="/school-dashboard" replace />;
+    } else {
+      return <Navigate to="/student-dashboard" replace />;
+    }
   }
 
   return <AuthForm onAuthComplete={() => setAuthComplete(true)} />;
