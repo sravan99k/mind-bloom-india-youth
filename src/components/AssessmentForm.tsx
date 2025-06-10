@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AssessmentFormProps {
   selectedCategories: string[];
@@ -16,10 +17,26 @@ interface AssessmentFormProps {
 }
 
 const AssessmentForm = ({ selectedCategories, onComplete }: AssessmentFormProps) => {
+  const { user, loading } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<Record<string, any>>({});
-  const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
   const { toast } = useToast();
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  // Redirect to auth page if user is not authenticated
+  if (!user && !loading) {
+    return <Navigate to="/auth" replace />;
+  }
 
   const assessmentQuestions = {
     depression: [
@@ -158,10 +175,8 @@ const AssessmentForm = ({ selectedCategories, onComplete }: AssessmentFormProps)
 
   const saveAssessmentToDatabase = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
       if (!user) {
-        console.log("No authenticated user found, proceeding without saving");
+        console.log("No authenticated user found");
         return calculateResults();
       }
 
@@ -198,7 +213,7 @@ const AssessmentForm = ({ selectedCategories, onComplete }: AssessmentFormProps)
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setLoading(true);
+      setFormLoading(true);
       
       try {
         const results = await saveAssessmentToDatabase();
@@ -219,7 +234,7 @@ const AssessmentForm = ({ selectedCategories, onComplete }: AssessmentFormProps)
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        setFormLoading(false);
       }
     }
   };
@@ -345,16 +360,16 @@ const AssessmentForm = ({ selectedCategories, onComplete }: AssessmentFormProps)
         <Button
           variant="outline"
           onClick={handleBack}
-          disabled={currentStep === 0 || loading}
+          disabled={currentStep === 0 || formLoading}
         >
           ← Back
         </Button>
         <Button
           onClick={handleNext}
           className="bg-teal-500 hover:bg-teal-600"
-          disabled={loading || (currentQuestion.type !== "textarea" && !isCurrentQuestionAnswered())}
+          disabled={formLoading || (currentQuestion.type !== "textarea" && !isCurrentQuestionAnswered())}
         >
-          {loading ? (
+          {formLoading ? (
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               <span>Saving...</span>
