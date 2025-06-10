@@ -11,6 +11,7 @@ import AchievementBadges from "@/components/gamification/AchievementBadges";
 import AnonymousForum from "@/components/forum/AnonymousForum";
 import CounselorConnect from "@/components/counselor/CounselorConnect";
 import PlatformFeedback from "@/components/feedback/PlatformFeedback";
+import AIWellnessChatbot from "@/components/ai/AIWellnessChatbot";
 
 const WellnessDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,17 +25,18 @@ const WellnessDashboard = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">My Wellness Journey</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Your personalized space for mental health and well-being. Track your progress, 
-            connect with others, and access resources tailored just for you.
+            connect with others, and access AI-powered support tailored just for you.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 mb-8">
+          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-9 mb-8">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="mood">Mood</TabsTrigger>
             <TabsTrigger value="journal">Journal</TabsTrigger>
             <TabsTrigger value="goals">Goals</TabsTrigger>
             <TabsTrigger value="achievements">Badges</TabsTrigger>
+            <TabsTrigger value="chatbot">AI Support</TabsTrigger>
             <TabsTrigger value="forum">Forum</TabsTrigger>
             <TabsTrigger value="counselor">Counselor</TabsTrigger>
             <TabsTrigger value="feedback">Feedback</TabsTrigger>
@@ -58,6 +60,10 @@ const WellnessDashboard = () => {
 
           <TabsContent value="achievements" className="space-y-6">
             <AchievementBadges />
+          </TabsContent>
+
+          <TabsContent value="chatbot" className="space-y-6">
+            <AIWellnessChatbot />
           </TabsContent>
 
           <TabsContent value="forum" className="space-y-6">

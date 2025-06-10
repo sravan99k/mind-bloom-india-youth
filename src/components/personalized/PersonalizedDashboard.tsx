@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Heart, TrendingUp, Target, BookOpen, Award, Users } from "lucide-react";
+import { Heart, TrendingUp, Target, BookOpen, Award, Users, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import PersonalizedRecommendations from "@/components/ai/PersonalizedRecommendations";
 
 const PersonalizedDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -65,27 +66,6 @@ const PersonalizedDashboard = () => {
   const averageMoodScore = recentMoods.length > 0 
     ? recentMoods.reduce((sum, mood) => sum + mood.mood_score, 0) / recentMoods.length 
     : 0;
-
-  const personalizedContent = [
-    {
-      title: "Managing Stress Before Exams",
-      description: "Learn effective techniques to reduce exam anxiety and improve focus.",
-      type: "article",
-      match: "Based on your recent stress assessment"
-    },
-    {
-      title: "5-Minute Breathing Exercise",
-      description: "Quick relaxation technique for busy students.",
-      type: "exercise",
-      match: "Recommended for mood improvement"
-    },
-    {
-      title: "Building Healthy Sleep Habits",
-      description: "Tips for better sleep quality and mental clarity.",
-      type: "guide",
-      match: "Popular among grade 8 students"
-    }
-  ];
 
   if (loading) {
     return (
@@ -162,36 +142,8 @@ const PersonalizedDashboard = () => {
         </Card>
       </div>
 
-      {/* My Daily Dose of Positivity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-teal-500" />
-            My Daily Dose of Positivity
-          </CardTitle>
-          <CardDescription>
-            Personalized content just for you based on your progress and preferences
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {personalizedContent.map((content, index) => (
-            <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 mb-1">{content.title}</h4>
-                  <p className="text-sm text-gray-600 mb-2">{content.description}</p>
-                  <Badge variant="secondary" className="text-xs">
-                    {content.match}
-                  </Badge>
-                </div>
-                <Button size="sm" variant="outline">
-                  Read More
-                </Button>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      {/* AI-Powered Personalized Recommendations */}
+      <PersonalizedRecommendations />
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -281,10 +233,10 @@ const PersonalizedDashboard = () => {
             <Button 
               variant="outline" 
               className="h-20 flex-col gap-2"
-              onClick={() => window.location.href = '/wellness-dashboard?tab=forum'}
+              onClick={() => window.location.href = '/wellness-dashboard?tab=chatbot'}
             >
-              <Users className="h-6 w-6" />
-              Join Forum
+              <Sparkles className="h-6 w-6" />
+              AI Support
             </Button>
           </div>
         </CardContent>

@@ -6,13 +6,14 @@ import SchoolOverview from "@/components/SchoolOverview";
 import StudentMetrics from "@/components/StudentMetrics";
 import HighRiskStudentsAlert from "@/components/HighRiskStudentsAlert";
 import SchoolAnalyticsDashboard from "@/components/SchoolAnalyticsDashboard";
+import EarlyRiskDetection from "@/components/ai/EarlyRiskDetection";
 import { fetchStudentData, StudentData } from "@/services/studentDataService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
-import { AlertTriangle, ClipboardList } from "lucide-react";
+import { AlertTriangle, ClipboardList, Brain } from "lucide-react";
 
 const SchoolDashboard = () => {
   const { user } = useAuth();
@@ -104,13 +105,17 @@ const SchoolDashboard = () => {
               School Mental Health Dashboard
             </h1>
             <p className="text-lg text-gray-600">
-              Monitor and support student mental health across your institution.
+              Monitor and support student mental health with AI-powered insights and early intervention.
             </p>
           </div>
           
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="ai-detection">
+                <Brain className="h-4 w-4 mr-2" />
+                AI Detection
+              </TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="alerts">High-Risk Alerts</TabsTrigger>
             </TabsList>
@@ -124,6 +129,10 @@ const SchoolDashboard = () => {
                   <StudentMetrics />
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="ai-detection" className="space-y-6">
+              <EarlyRiskDetection />
             </TabsContent>
 
             <TabsContent value="analytics" className="space-y-6">
