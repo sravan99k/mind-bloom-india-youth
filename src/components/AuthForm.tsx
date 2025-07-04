@@ -120,7 +120,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
         password: signupData.password,
         options: {
           data: {
-            name: signupData.name,
+            full_name: signupData.name,
             role: signupData.role,
           }
         }
@@ -143,7 +143,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
           dateOfBirth = `${signupData.dobYear}-${signupData.dobMonth.padStart(2, '0')}-${signupData.dobDay.padStart(2, '0')}`;
         }
 
-        // Save to user_demographics table
+        // Save to user_demographics table (correct table name)
         const { error: demoError } = await supabase
           .from('user_demographics')
           .insert({
