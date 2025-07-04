@@ -1,166 +1,125 @@
 
 import { useState, useEffect } from "react";
-import Footer from "@/components/Footer";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ProfanityFilteredInput } from "@/components/ui/profanity-filtered-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User, Lock } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const ProfileSettings = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: "",
+  const { user, loading: authLoading } = useAuth();
+  const [formData, setFormData] = useState({
+    full_name: "",
     email: "",
     state: "",
     city: "",
     pincode: "",
     class: "",
     gender: "",
-    roll_no: "",
-    schoolName: "",
-    address: "",
-    schoolPhone: "",
-    schoolEmail: "",
-    branch: "",
-    parentName: "",
-    parentPhone: ""
+    rollno: "",
+    school_name: "",
+    school_branch: "",
+    parent_name: "",
+    parent_phone: "",
+    date_of_birth: ""
   });
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
-      loadProfileData();
-    }
-  }, [user]);
+    const fetchUserData = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_demographics')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
 
-  const loadProfileData = async () => {
-    if (!user) return;
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching user data:', error);
+          return;
+        }
 
-    try {
-      const { data, error } = await supabase
-        .from('demographics')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+        if (data) {
+          setFormData({
+            full_name: data.full_name || "",
+            email: data.email || "",
+            state: data.state || "",
+            city: data.city || "",
+            pincode: data.pincode || "",
+            class: data.class || "",
+            gender: data.gender || "",
+            rollno: data.rollno || "",
+            school_name: data.school_name || "",
+            school_branch: data.school_branch || "",
+            parent_name: data.parent_name || "",
+            parent_phone: data.parent_phone || "",
+            date_of_birth: data.date_of_birth || ""
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      if (data) {
-        setProfileData({
-          name: user.user_metadata?.name || "",
-          email: user.email || "",
-          state: (data as any).state || "",
-          city: (data as any).city || "",
-          pincode: (data as any).pincode || "",
-          class: data.grade || "",
-          gender: data.gender || "",
-          roll_no: (data as any).roll_no || "",
-          schoolName: data.school || "",
-          address: (data as any).address || "",
-          schoolPhone: (data as any).school_phone || "",
-          schoolEmail: (data as any).school_email || "",
-          branch: (data as any).branch || "",
-          parentName: (data as any).parent_name || "",
-          parentPhone: (data as any).parent_phone || ""
-        });
-      }
-    } catch (error) {
-      console.error('Error loading profile data:', error);
+    if (user && !authLoading) {
+      fetchUserData();
     }
-  };
+  }, [user, authLoading]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setProfileData(prev => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-
-  const handleRollNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toUpperCase();
-    // Only allow alphanumeric characters
-    if (/^[A-Z0-9]*$/.test(value) || value === '') {
-      setProfileData(prev => ({
-        ...prev,
-        roll_no: value
-      }));
-    }
-  };
-
-  const handleProfileUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.id) return;
+
     setLoading(true);
 
     try {
-      // Update user metadata
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { name: profileData.name }
-      });
-
-      if (updateError) throw updateError;
-
-      // Update demographics
-      const { data: updatedData, error: demoError } = await supabase
-        .from('demographics')
+      const { error } = await supabase
+        .from('user_demographics')
         .upsert({
-          user_id: user?.id,
-          state: profileData.state,
-          city: profileData.city,
-          pincode: profileData.pincode,
-          grade: profileData.class,
-          gender: profileData.gender,
-          roll_no: profileData.roll_no,
-          school: profileData.schoolName,
-          branch: profileData.branch,
-          parent_name: profileData.parentName,
-          parent_phone: profileData.parentPhone,
-        })
-        .select()
-        .single();
+          user_id: user.id,
+          full_name: formData.full_name,
+          email: formData.email,
+          role: user.user_metadata?.role || 'student',
+          state: formData.state,
+          city: formData.city,
+          pincode: formData.pincode,
+          class: formData.class,
+          gender: formData.gender,
+          rollno: formData.rollno,
+          school_name: formData.school_name,
+          school_branch: formData.school_branch,
+          parent_name: formData.parent_name,
+          parent_phone: formData.parent_phone,
+          date_of_birth: formData.date_of_birth || null,
+        });
 
-      if (demoError) throw demoError;
-
-      // Update local state with the latest data
-      if (updatedData) {
-        setProfileData(prev => ({
-          ...prev,
-          state: updatedData.state || '',
-          city: updatedData.city || '',
-          pincode: updatedData.pincode || '',
-          class: updatedData.grade || '',
-          gender: updatedData.gender || '',
-          roll_no: updatedData.roll_no || '',
-          schoolName: updatedData.school || '',
-          branch: updatedData.branch || '',
-          parentName: updatedData.parent_name || '',
-          parentPhone: updatedData.parent_phone || ''
-        }));
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
       }
 
       toast({
-        title: "Profile Updated",
-        description: "Your profile information has been updated successfully.",
+        title: "Success",
+        description: "Your profile has been updated successfully.",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
-        title: "Update Error",
-        description: error.message,
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -168,359 +127,228 @@ const ProfileSettings = () => {
     }
   };
 
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "New passwords do not match.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (passwordData.newPassword.length < 6) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Password Updated",
-        description: "Your password has been updated successfully.",
-      });
-
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      });
-    } catch (error: any) {
-      toast({
-        title: "Password Update Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card>
+          <CardContent className="pt-6">
+            <p>Please log in to access your profile settings.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-            <div className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
-            <p className="text-lg text-gray-600">
-              Manage your personal information and account security
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">Profile Settings</CardTitle>
+            <CardDescription>
+              Update your personal information and preferences
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input
+                    id="full_name"
+                    value={formData.full_name}
+                    onChange={(e) => handleInputChange("full_name", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-          <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Personal Information
-              </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center gap-2">
-                <Lock className="w-4 h-4" />
-                Security
-              </TabsTrigger>
-            </TabsList>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    value={formData.state}
+                    onChange={(e) => handleInputChange("state", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange("city", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-            <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>
-                    Update your personal details and contact information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleProfileUpdate} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <ProfanityFilteredInput
-                          id="name"
-                          value={profileData.name}
-                          onChange={handleInputChange}
-                          disabled={loading}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={profileData.email}
-                          disabled
-                          className="bg-gray-100"
-                        />
-                        <p className="text-xs text-gray-500">Email cannot be changed</p>
-                      </div>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="pincode">Pincode</Label>
+                  <Input
+                    id="pincode"
+                    value={formData.pincode}
+                    onChange={(e) => handleInputChange("pincode", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="class">Class</Label>
+                  <Select 
+                    value={formData.class} 
+                    onValueChange={(value) => handleInputChange("class", value)} 
+                    disabled={loading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="6">Class 6</SelectItem>
+                      <SelectItem value="7">Class 7</SelectItem>
+                      <SelectItem value="8">Class 8</SelectItem>
+                      <SelectItem value="9">Class 9</SelectItem>
+                      <SelectItem value="10">Class 10</SelectItem>
+                      <SelectItem value="11">Class 11</SelectItem>
+                      <SelectItem value="12">Class 12</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="state">State</Label>
-                        <ProfanityFilteredInput
-                          id="state"
-                          value={profileData.state}
-                          onChange={handleInputChange}
-                          disabled={loading}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
-                        <ProfanityFilteredInput
-                          id="city"
-                          value={profileData.city}
-                          onChange={handleInputChange}
-                          disabled={loading}
-                        />
-                      </div>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender</Label>
+                  <Select 
+                    value={formData.gender} 
+                    onValueChange={(value) => handleInputChange("gender", value)} 
+                    disabled={loading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="rollno">Roll Number</Label>
+                  <Input
+                    id="rollno"
+                    value={formData.rollno}
+                    onChange={(e) => handleInputChange("rollno", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="pincode">Pincode</Label>
-                        <ProfanityFilteredInput
-                          id="pincode"
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          value={profileData.pincode}
-                          onChange={(e) => {
-                            // Only allow numeric input
-                            const value = e.target.value.replace(/\D/g, '');
-                            setProfileData(prev => ({
-                              ...prev,
-                              pincode: value
-                            }));
-                          }}
-                          disabled={loading}
-                        />
-                      </div>
-                      {user?.role === 'student' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="roll_no">Roll Number</Label>
-                          <div className="flex items-center gap-2">
-                            <Input
-                              id="roll_no"
-                              name="roll_no"
-                              value={profileData.roll_no}
-                              onChange={handleRollNumberChange}
-                              placeholder="e.g., 23X1234"
-                              className="font-mono"
-                              maxLength={10}
-                            />
-                            {profileData.roll_no && !/^[A-Z0-9]{4,10}$/.test(profileData.roll_no) && (
-                              <p className="text-xs text-red-500">Enter a valid roll number</p>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            This is your unique identifier at school
-                          </p>
-                        </div>
-                      )}
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="school_name">School Name</Label>
+                  <Input
+                    id="school_name"
+                    value={formData.school_name}
+                    onChange={(e) => handleInputChange("school_name", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="school_branch">Branch/Stream</Label>
+                  <Select 
+                    value={formData.school_branch} 
+                    onValueChange={(value) => handleInputChange("school_branch", value)} 
+                    disabled={loading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="science">Science</SelectItem>
+                      <SelectItem value="commerce">Commerce</SelectItem>
+                      <SelectItem value="arts">Arts/Humanities</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="gender">Gender</Label>
-                        <Select 
-                          value={profileData.gender} 
-                          onValueChange={(value) => setProfileData(prev => ({
-                            ...prev,
-                            gender: value
-                          }))}
-                          disabled={loading}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                            <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {user?.role === 'student' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="class">Class</Label>
-                          <Select
-                            name="class"
-                            value={profileData.class}
-                            onValueChange={(value) => {
-                              setProfileData(prev => ({
-                                ...prev,
-                                class: value,
-                                // Update roll number format if it matches the old grade
-                                roll_no: prev.roll_no && prev.roll_no.length > 0
-                                  ? `${value}${prev.roll_no.substring(1)}`
-                                  : prev.roll_no
-                              }));
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select your class" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[6, 7, 8, 9, 10].map((grade) => (
-                                <SelectItem key={grade} value={grade.toString()}>
-                                  Grade {grade}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="parent_name">Parent Name</Label>
+                  <Input
+                    id="parent_name"
+                    value={formData.parent_name}
+                    onChange={(e) => handleInputChange("parent_name", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="parent_phone">Parent Phone</Label>
+                  <Input
+                    id="parent_phone"
+                    value={formData.parent_phone}
+                    onChange={(e) => handleInputChange("parent_phone", e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-                        </div>
-                      )}
-                    </div>
+              <div className="space-y-2">
+                <Label htmlFor="date_of_birth">Date of Birth</Label>
+                <Input
+                  id="date_of_birth"
+                  type="date"
+                  value={formData.date_of_birth}
+                  onChange={(e) => handleInputChange("date_of_birth", e.target.value)}
+                  disabled={loading}
+                />
+              </div>
 
-                    <div className="space-y-6">
-                      <div className="border rounded-lg p-6 bg-white shadow-sm">
-                        <h3 className="text-lg font-medium mb-4">School Information</h3>
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="schoolName" className="text-sm font-medium text-gray-700">School Name</Label>
-                            <Input
-                              id="schoolName"
-                              value={profileData.schoolName}
-                              onChange={(e) => setProfileData({...profileData, schoolName: e.target.value})}
-                              disabled={loading}
-                              className="w-full"
-                            />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor="branch" className="text-sm font-medium text-gray-700">School Branch</Label>
-                            <Input
-                              id="branch"
-                              value={profileData.branch || ''}
-                              onChange={(e) => setProfileData({...profileData, branch: e.target.value})}
-                              disabled={loading}
-                              className="w-full"
-                              placeholder="Enter school branch name"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-
-                    </div>
-
-                    {user?.role === 'student' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="parentName">Parent/Guardian Name</Label>
-                          <ProfanityFilteredInput
-                            id="parentName"
-                            value={profileData.parentName}
-                            onChange={(e) => setProfileData({...profileData, parentName: e.target.value})}
-                            disabled={loading}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="parentPhone">Parent/Guardian Phone</Label>
-                          <ProfanityFilteredInput
-                            id="parentPhone"
-                            type="tel"
-                            value={profileData.parentPhone}
-                            onChange={(e) => setProfileData({...profileData, parentPhone: e.target.value})}
-                            disabled={loading}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <Button 
-                      type="submit" 
-                      className="bg-teal-500 hover:bg-teal-600"
-                      disabled={loading}
-                    >
-                      {loading ? "Updating..." : "Update Profile"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="security">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Change Password</CardTitle>
-                  <CardDescription>
-                    Update your password to keep your account secure
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handlePasswordUpdate} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="currentPassword">Current Password</Label>
-                      <ProfanityFilteredInput
-                        id="currentPassword"
-                        type="password"
-                        value={passwordData.currentPassword}
-                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                        disabled={loading}
-                        placeholder="Enter current password"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="newPassword">New Password</Label>
-                      <ProfanityFilteredInput
-                        id="newPassword"
-                        type="password"
-                        value={passwordData.newPassword}
-                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                        disabled={loading}
-                        placeholder="Enter new password"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                      <ProfanityFilteredInput
-                        id="confirmPassword"
-                        type="password"
-                        value={passwordData.confirmPassword}
-                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                        disabled={loading}
-                        placeholder="Confirm new password"
-                      />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="bg-teal-500 hover:bg-teal-600"
-                      disabled={loading}
-                    >
-                      {loading ? "Updating..." : "Update Password"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Profile"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-      <Footer />
     </div>
   );
 };

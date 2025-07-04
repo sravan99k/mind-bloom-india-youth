@@ -1,285 +1,217 @@
 
 import { useState, useEffect } from "react";
-import Footer from "@/components/Footer";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ProfanityFilteredInput } from "@/components/ui/profanity-filtered-input";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Download, Filter, Search } from "lucide-react";
-
-// Import the new components
-import { StudentOverviewTable } from "@/components/progress/StudentOverviewTable";
-import { IndividualStudentProgress } from "@/components/progress/IndividualStudentProgress";
-import { AggregateTrends } from "@/components/progress/AggregateTrends";
-import { InterventionTracking } from "@/components/progress/InterventionTracking";
-import { PersonalProgressChart } from "@/components/progress/PersonalProgressChart";
-import { AssessmentHistory } from "@/components/progress/AssessmentHistory";
-import { ProgressSidebar } from "@/components/progress/ProgressSidebar";
-
-interface AssessmentResult {
-  depression?: number;
-  stress?: number;
-  anxiety?: number;
-  adhd?: number;
-  wellbeing?: number;
-  overall?: number;
-}
-
-interface AssessmentData {
-  id: string;
-  user_id: string;
-  categories: string[];
-  responses: any;
-  results?: AssessmentResult;
-  completed_at: string;
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Loader2, TrendingUp, Calendar, Award } from "lucide-react";
+import { AssessmentData } from "@/types/assessment";
 
 const ProgressTracking = () => {
-  const { user } = useAuth();
-  const [assessmentData, setAssessmentData] = useState<AssessmentData[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { user, loading: authLoading } = useAuth();
+  const [assessments, setAssessments] = useState<AssessmentData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const isManagement = user?.role === 'management';
+  const [progressData, setProgressData] = useState({
+    currentStreak: 0,
+    totalProgress: 0,
+    improvementRate: 0,
+    nextMilestone: 5
+  });
 
   useEffect(() => {
-    loadAssessmentData();
-  }, [user, selectedPeriod, selectedCategory]);
+    const fetchProgress = async () => {
+      if (!user?.id) return;
 
-  const loadAssessmentData = async () => {
-    if (!user) return;
+      try {
+        const { data, error } = await supabase
+          .from('assessment_responses')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('completed_at', { ascending: false });
 
-    try {
-      let query = supabase
-        .from('assessment_responses')
-        .select('*');
+        if (error) {
+          console.error('Error fetching progress:', error);
+          return;
+        }
 
-      if (!isManagement) {
-        query = query.eq('user_id', user.id);
+        // Transform the data to match our expected format
+        const transformedData: AssessmentData[] = data.map(item => ({
+          id: item.id,
+          user_id: item.user_id,
+          categories: item.categories,
+          responses: item.responses,
+          results: item.results ? (typeof item.results === 'string' ? JSON.parse(item.results) : item.results) : null,
+          completed_at: item.completed_at
+        }));
+
+        setAssessments(transformedData);
+
+        // Calculate progress metrics
+        const totalAssessments = transformedData.length;
+        let totalScore = 0;
+        let validScores = 0;
+
+        transformedData.forEach(assessment => {
+          if (assessment.results && typeof assessment.results === 'object' && 'overallScore' in assessment.results) {
+            totalScore += assessment.results.overallScore;
+            validScores++;
+          }
+        });
+
+        const averageScore = validScores > 0 ? totalScore / validScores : 0;
+        const improvementRate = validScores > 1 ? 
+          Math.max(0, Math.min(100, (averageScore - 50) * 2)) : 0;
+
+        setProgressData({
+          currentStreak: Math.min(totalAssessments, 7), // Max 7 day streak for demo
+          totalProgress: Math.round(averageScore),
+          improvementRate: Math.round(improvementRate),
+          nextMilestone: Math.ceil(totalAssessments / 5) * 5 + 5
+        });
+      } catch (error) {
+        console.error('Error processing progress:', error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const { data, error } = await query.order('completed_at', { ascending: true });
-
-      if (error) throw error;
-
-      setAssessmentData(data || []);
-    } catch (error) {
-      console.error('Error loading assessment data:', error);
-    } finally {
-      setLoading(false);
+    if (user && !authLoading) {
+      fetchProgress();
     }
-  };
+  }, [user, authLoading]);
 
-  const getProgressData = () => {
-    if (!assessmentData.length) return [];
-
-    return assessmentData.map((assessment) => ({
-      date: new Date(assessment.completed_at).toLocaleDateString(),
-      depression: (assessment.results?.depression as number) || Math.floor(Math.random() * 100),
-      stress: (assessment.results?.stress as number) || Math.floor(Math.random() * 100),
-      anxiety: (assessment.results?.anxiety as number) || Math.floor(Math.random() * 100),
-      wellbeing: (assessment.results?.wellbeing as number) || Math.floor(Math.random() * 100),
-      overall: (assessment.results?.overall as number) || Math.floor(Math.random() * 100),
-    }));
-  };
-
-  const getStudentList = () => {
-    if (!isManagement) return [];
-    
-    return [
-      { id: 'ST001', name: 'Alex Johnson', class: 'Grade 10', riskLevel: 'High', lastAssessment: '2024-01-15' },
-      { id: 'ST002', name: 'Sarah Smith', class: 'Grade 9', riskLevel: 'Low', lastAssessment: '2024-01-14' },
-      { id: 'ST003', name: 'Michael Brown', class: 'Grade 11', riskLevel: 'Moderate', lastAssessment: '2024-01-13' },
-    ].filter(student => 
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.id.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-
-  const getAggregateData = () => {
-    const categories = ['Depression', 'Stress', 'Anxiety', 'ADHD', 'Wellbeing'];
-    return categories.map(category => ({
-      category,
-      percentage: Math.floor(Math.random() * 100),
-      trend: Math.random() > 0.5 ? 'up' : 'down' as 'up' | 'down',
-      change: Math.floor(Math.random() * 20),
-      studentCount: Math.floor(Math.random() * 50) + 10,
-    }));
-  };
-
-  const getRiskColor = (percentage: number) => {
-    if (percentage >= 70) return "text-red-600";
-    if (percentage >= 40) return "text-yellow-600";
-    return "text-green-600";
-  };
-
-  const getRiskLevel = (percentage: number) => {
-    if (percentage >= 70) return "High Risk";
-    if (percentage >= 40) return "Moderate Risk";
-    return "Low Risk";
-  };
-
-  const getRiskBadgeColor = (level: string) => {
-    switch (level) {
-      case 'High': return 'bg-red-100 text-red-800';
-      case 'Moderate': return 'bg-yellow-100 text-yellow-800';
-      case 'Low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const exportData = () => {
-    const csvData = assessmentData.map(assessment => ({
-      Date: new Date(assessment.completed_at).toLocaleDateString(),
-      Categories: assessment.categories.join(', '),
-      Results: JSON.stringify(assessment.results || {}),
-    }));
-
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Date,Categories,Results\n"
-      + csvData.map(row => `${row.Date},"${row.Categories}","${row.Results}"`).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `progress_report_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading progress data...</p>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
-  const progressData = getProgressData();
-  const aggregateData = getAggregateData();
-  const studentList = getStudentList();
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card>
+          <CardContent className="pt-6">
+            <p>Please log in to track your progress.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-            <div className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {isManagement ? "School Progress Tracking" : "My Progress Tracking"}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {isManagement 
-                ? "Monitor student mental health trends and intervention effectiveness" 
-                : "Track your mental health journey and see your progress over time"
-              }
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Progress Tracking</h1>
+          <p className="mt-2 text-gray-600">Monitor your wellness journey and achievements</p>
+        </div>
 
-          {/* Filters and Search */}
-          <div className="mb-6 flex flex-wrap gap-4 items-center">
-            <div className="flex gap-4">
-              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select time period" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="last30">Last 30 Days</SelectItem>
-                  <SelectItem value="last90">Last 3 Months</SelectItem>
-                  <SelectItem value="lastyear">Last Year</SelectItem>
-                </SelectContent>
-              </Select>
+        {/* Progress Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Current Streak</h3>
+                <Calendar className="h-6 w-6 text-blue-500" />
+              </div>
+              <p className="text-3xl font-bold text-blue-600">{progressData.currentStreak} days</p>
+              <p className="text-sm text-gray-600 mt-2">Keep going! You're doing great.</p>
+            </CardContent>
+          </Card>
 
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="depression">Depression</SelectItem>
-                  <SelectItem value="stress">Stress</SelectItem>
-                  <SelectItem value="anxiety">Anxiety</SelectItem>
-                  <SelectItem value="adhd">ADHD</SelectItem>
-                  <SelectItem value="wellbeing">Wellbeing</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Overall Progress</h3>
+                <TrendingUp className="h-6 w-6 text-green-500" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Progress</span>
+                  <span className="text-sm font-medium">{progressData.totalProgress}%</span>
+                </div>
+                <Progress value={progressData.totalProgress} className="w-full" />
+              </div>
+            </CardContent>
+          </Card>
 
-            {isManagement && (
-              <div className="flex gap-2 items-center">
-                <Search className="w-4 h-4 text-gray-500" />
-                <ProfanityFilteredInput
-                  placeholder="Search students..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full md:w-64"
-                />
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Next Milestone</h3>
+                <Award className="h-6 w-6 text-yellow-500" />
+              </div>
+              <p className="text-3xl font-bold text-yellow-600">{progressData.nextMilestone}</p>
+              <p className="text-sm text-gray-600 mt-2">assessments to unlock next achievement</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Assessment History */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Assessment History</CardTitle>
+            <CardDescription>Track your wellness assessment journey over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {assessments.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No assessments completed yet.</p>
+                <p className="text-sm text-gray-400 mt-2">Complete your first assessment to start tracking progress.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {assessments.map((assessment, index) => (
+                  <div key={assessment.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline">Assessment #{assessments.length - index}</Badge>
+                        {assessment.categories.map((category) => (
+                          <Badge key={category} variant="secondary">
+                            {category}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Completed on {new Date(assessment.completed_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      {assessment.results && typeof assessment.results === 'object' && 'overallScore' in assessment.results && (
+                        <div className="flex items-center gap-2">
+                          <div className="text-right">
+                            <p className="text-lg font-semibold text-gray-900">
+                              {assessment.results.overallScore}%
+                            </p>
+                            {index < assessments.length - 1 && assessment.results && 
+                             assessments[index + 1].results && 
+                             typeof assessments[index + 1].results === 'object' && 
+                             'overallScore' in assessments[index + 1].results! && (
+                              <p className={`text-sm ${
+                                assessment.results.overallScore > assessments[index + 1].results!.overallScore 
+                                  ? 'text-green-600' 
+                                  : assessment.results.overallScore < assessments[index + 1].results!.overallScore 
+                                    ? 'text-red-600' 
+                                    : 'text-gray-600'
+                              }`}>
+                                {assessment.results.overallScore > assessments[index + 1].results!.overallScore ? '+' : ''}
+                                {assessment.results.overallScore - assessments[index + 1].results!.overallScore}%
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-
-            <Button onClick={exportData} variant="outline" className="ml-auto">
-              <Download className="w-4 h-4 mr-2" />
-              Export Data
-            </Button>
-          </div>
-
-          {isManagement ? (
-            // Management View
-            <div className="space-y-8">
-              <StudentOverviewTable
-                studentList={studentList}
-                onSelectStudent={setSelectedStudent}
-                getRiskBadgeColor={getRiskBadgeColor}
-              />
-
-              {selectedStudent && (
-                <IndividualStudentProgress
-                  selectedStudent={selectedStudent}
-                  progressData={progressData}
-                />
-              )}
-
-              <AggregateTrends
-                aggregateData={aggregateData}
-                getRiskColor={getRiskColor}
-              />
-
-              <InterventionTracking />
-            </div>
-          ) : (
-            // Student View
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-6">
-                <PersonalProgressChart 
-                progressData={progressData} 
-                selectedCategory={selectedCategory}
-                onCategoryChange={setSelectedCategory}
-              />
-                <AssessmentHistory
-                  assessmentData={assessmentData}
-                  getRiskLevel={getRiskLevel}
-                  getRiskBadgeColor={getRiskBadgeColor}
-                />
-              </div>
-
-              <ProgressSidebar
-                assessmentData={assessmentData}
-                getRiskColor={getRiskColor}
-                onExportData={exportData}
-              />
-            </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
       </div>
-      <Footer />
     </div>
   );
 };

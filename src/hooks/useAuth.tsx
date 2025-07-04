@@ -39,7 +39,7 @@ export const useAuth = () => {
         let demoData = null;
         
         try {
-          // Fetch from user_demographics table instead of demographics
+          // Fetch from user_demographics table
           const { data, error: demoError } = await supabase
             .from('user_demographics')
             .select('*')
@@ -123,18 +123,18 @@ export const useAuth = () => {
       // If user doesn't have a role in metadata, set a default one
       if (!user.user_metadata?.role) {
         try {
-          const { data: profile } = await supabase
-            .from('profiles')
+          const { data: demographics } = await supabase
+            .from('user_demographics')
             .select('role')
-            .eq('id', user.id)
+            .eq('user_id', user.id)
             .single();
             
-          if (profile?.role) {
+          if (demographics?.role) {
             // Update auth user metadata with role
             await supabase.auth.updateUser({
-              data: { role: profile.role }
+              data: { role: demographics.role }
             });
-            return profile.role;
+            return demographics.role;
           }
         } catch (error) {
           console.error('Error ensuring user role:', error);
