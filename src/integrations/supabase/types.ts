@@ -501,11 +501,11 @@ export type Database = {
           id: string
           parent_name: string | null
           parent_phone: string | null
-          pincode: string
+          pincode: string | null
           role: string
           rollno: string | null
           school_branch: string | null
-          school_name: string
+          school_name: string | null
           state: string
           updated_at: string
           user_id: string
@@ -521,11 +521,11 @@ export type Database = {
           id?: string
           parent_name?: string | null
           parent_phone?: string | null
-          pincode: string
+          pincode?: string | null
           role: string
           rollno?: string | null
           school_branch?: string | null
-          school_name: string
+          school_name?: string | null
           state: string
           updated_at?: string
           user_id: string
@@ -541,11 +541,11 @@ export type Database = {
           id?: string
           parent_name?: string | null
           parent_phone?: string | null
-          pincode?: string
+          pincode?: string | null
           role?: string
           rollno?: string | null
           school_branch?: string | null
-          school_name?: string
+          school_name?: string | null
           state?: string
           updated_at?: string
           user_id?: string
