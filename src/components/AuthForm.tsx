@@ -105,7 +105,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     if (!signupData.role) {
       toast({
         title: "Role Required",
-        description: "Please select your role (Student or Management).",
+        description: "Please select your role (Student or School Management).",
         variant: "destructive",
       });
       return;
@@ -114,6 +114,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     setLoading(true);
 
     try {
+      // First, create the user account
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
@@ -136,40 +137,52 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
       }
 
       if (data.user) {
-        // Save demographics with all the new fields
-        let dob = null;
+        // Prepare date of birth
+        let dateOfBirth = null;
         if (signupData.dobYear && signupData.dobMonth && signupData.dobDay) {
-          dob = `${signupData.dobYear}-${signupData.dobMonth.padStart(2, '0')}-${signupData.dobDay.padStart(2, '0')}`;
+          dateOfBirth = `${signupData.dobYear}-${signupData.dobMonth.padStart(2, '0')}-${signupData.dobDay.padStart(2, '0')}`;
         }
+
+        // Save to user_demographics table
         const { error: demoError } = await supabase
-          .from('demographics')
+          .from('user_demographics')
           .insert({
             user_id: data.user.id,
-            age: parseInt(signupData.class) || null,
-            gender: signupData.gender,
-            grade: signupData.class,
-            school: signupData.schoolName,
+            full_name: signupData.name,
+            email: signupData.email,
+            role: signupData.role,
             state: signupData.state,
             city: signupData.city,
             pincode: signupData.pincode,
-            roll_no: signupData.rollno,
-            branch: signupData.branch,
+            class: signupData.class,
+            gender: signupData.gender,
+            rollno: signupData.rollno,
+            school_name: signupData.schoolName,
+            school_branch: signupData.branch,
+            date_of_birth: dateOfBirth,
             parent_name: signupData.parentName,
             parent_phone: signupData.parentPhone,
-            dob,
           });
 
         if (demoError) {
-          console.error('Error saving demographics:', demoError);
+          console.error('Error saving user demographics:', demoError);
+          toast({
+            title: "Profile Setup Error",
+            description: "Account created but there was an issue saving your profile. You can update it later.",
+            variant: "default",
+            duration: 3000,
+          });
         }
 
         toast({
           title: "Account Created!",
           description: "Your account has been created successfully. You can now access the platform.",
+          duration: 2000,
         });
         onAuthComplete();
       }
     } catch (error) {
+      console.error('Signup error:', error);
       toast({
         title: "Signup Error",
         description: "An unexpected error occurred. Please try again.",
