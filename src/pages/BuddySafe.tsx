@@ -1,13 +1,15 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Heart, Phone, AlertTriangle, Users, Brain, ArrowRight } from "lucide-react";
+import { Shield, Heart, Phone, AlertTriangle, Users, Brain, ArrowRight, Globe, Smile, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 
 const BuddySafe = () => {
+  const [showMore, setShowMore] = useState(false);
+
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
   };
@@ -44,6 +46,33 @@ const BuddySafe = () => {
       color: "border-orange-200 bg-orange-50 hover:bg-orange-100",
       link: "/substance-abuse-awareness",
       stats: "23% face peer pressure issues"
+    }
+  ];
+
+  const additionalCategories = [
+    {
+      title: "Online Safety & Privacy",
+      description: "Protecting yourself and your information online, including digital addiction and privacy.",
+      icon: <Globe className="w-8 h-8 text-teal-600" />,
+      color: "border-teal-200 bg-teal-50 hover:bg-teal-100",
+      link: "/online-safety-awareness",
+      stats: "Focus: Internet safety, healthy screen habits"
+    },
+    {
+      title: "Respect & Relationships",
+      description: "Building safe, respectful, and inclusive connections with understanding of consent.",
+      icon: <HeartHandshake className="w-8 h-8 text-pink-600" />,
+      color: "border-pink-200 bg-pink-50 hover:bg-pink-100",
+      link: "/respect-relationships-awareness",
+      stats: "Focus: Consent, inclusion, understanding differences"
+    },
+    {
+      title: "Mental Health & Emotional Wellbeing",
+      description: "Caring for your mind and feelings, including body image and emotional regulation.",
+      icon: <Smile className="w-8 h-8 text-green-600" />,
+      color: "border-green-200 bg-green-50 hover:bg-green-100",
+      link: "/mental-health-awareness",
+      stats: "Focus: Emotions, body image, coping strategies"
     }
   ];
 
@@ -104,6 +133,53 @@ const BuddySafe = () => {
             </Link>
           ))}
         </div>
+
+        {/* Show More Button */}
+        <div className="text-center mb-8">
+          <Button
+            onClick={() => setShowMore(!showMore)}
+            variant="outline"
+            className="bg-white border-teal-200 text-teal-700 hover:bg-teal-50"
+          >
+            {showMore ? "Show Less" : "Show More Categories"}
+            <ArrowRight className={`w-4 h-4 ml-2 transition-transform ${showMore ? "rotate-90" : ""}`} />
+          </Button>
+        </div>
+
+        {/* Additional Categories - Show/Hide */}
+        {showMore && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in">
+            {additionalCategories.map((category, index) => (
+              <Link key={index} to={category.link}>
+                <Card className={`shadow-lg transition-all duration-200 cursor-pointer ${category.color}`}>
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      {category.icon}
+                      <div className="flex-1">
+                        <CardTitle className="text-xl text-gray-900">
+                          {category.title}
+                        </CardTitle>
+                        <CardDescription className="text-sm font-medium text-gray-600">
+                          {category.stats}
+                        </CardDescription>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-gray-400" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 text-sm mb-4">
+                      {category.description}
+                    </p>
+                    <div className="flex items-center text-sm font-medium text-blue-600">
+                      Learn more about staying safe
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* Quick Help Section */}
         <Card className="shadow-lg border-green-200 bg-green-50 mb-6">
