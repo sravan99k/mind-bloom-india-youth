@@ -25,6 +25,12 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import SchoolSettings from "./pages/SchoolSettings";
 import ChatPage from "./pages/ChatPage";
 
+// BuddySafe Awareness Pages
+import CyberbullyingAwareness from "./pages/CyberbullyingAwareness";
+import PhysicalBullyingAwareness from "./pages/PhysicalBullyingAwareness";
+import AcademicPressureAwareness from "./pages/AcademicPressureAwareness";
+import SubstanceAbuseAwareness from "./pages/SubstanceAbuseAwareness";
+
 // Components
 import { ProfanityFilterProvider } from "@/components/profanity-filter-provider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -47,6 +53,12 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/resources/*" element={<Resources />} />
+            
+            {/* BuddySafe awareness pages - accessible to all users */}
+            <Route path="/cyberbullying-awareness" element={<CyberbullyingAwareness />} />
+            <Route path="/physical-bullying-awareness" element={<PhysicalBullyingAwareness />} />
+            <Route path="/academic-pressure-awareness" element={<AcademicPressureAwareness />} />
+            <Route path="/substance-abuse-awareness" element={<SubstanceAbuseAwareness />} />
             
             {/* Protected student routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
