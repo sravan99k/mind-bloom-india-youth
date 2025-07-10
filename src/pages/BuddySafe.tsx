@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Heart, Phone, AlertTriangle, Users, Brain, ArrowRight, Globe, Smile, HeartHandshake } from "lucide-react";
+import { Shield, Heart, Phone, AlertTriangle, Users, Brain, ArrowRight, Globe, Smile, HeartHandshake, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -24,12 +23,12 @@ const BuddySafe = () => {
       stats: "37% of students experience this"
     },
     {
-      title: "Physical Bullying & Violence",
-      description: "Understand your rights to physical safety and how to get help.",
-      icon: <Users className="w-8 h-8 text-red-600" />,
+      title: "Substance Abuse & Violence",
+      description: "Understanding substance abuse, peer pressure, and protecting yourself from physical harm.",
+      icon: <AlertTriangle className="w-8 h-8 text-red-600" />,
       color: "border-red-200 bg-red-50 hover:bg-red-100",
-      link: "/physical-bullying-awareness",
-      stats: "42% of students face this challenge"
+      link: "/substance-abuse-violence-awareness",
+      stats: "Combined safety awareness"
     },
     {
       title: "Academic Pressure & Mental Health",
@@ -40,12 +39,12 @@ const BuddySafe = () => {
       stats: "68% of students report high stress"
     },
     {
-      title: "Substance Abuse & Peer Pressure",
-      description: "Make healthy choices and learn how to say no to harmful substances.",
-      icon: <AlertTriangle className="w-8 h-8 text-orange-600" />,
-      color: "border-orange-200 bg-orange-50 hover:bg-orange-100",
-      link: "/substance-abuse-awareness",
-      stats: "23% face peer pressure issues"
+      title: "Sexual Harassment",
+      description: "Recognizing and responding to unsafe situations, body safety, building trust and communication.",
+      icon: <UserX className="w-8 h-8 text-pink-600" />,
+      color: "border-pink-200 bg-pink-50 hover:bg-pink-100",
+      link: "/sexual-harassment-awareness",
+      stats: "Protection and body safety awareness"
     }
   ];
 
