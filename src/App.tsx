@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,6 +23,7 @@ import ReportsPage from "./pages/ReportsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SchoolSettings from "./pages/SchoolSettings";
 import ChatPage from "./pages/ChatPage";
+import MasoomPage from "./pages/MasoomPage";
 
 // BuddySafe Awareness Pages
 import CyberbullyingAwareness from "./pages/CyberbullyingAwareness";
@@ -58,6 +58,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/resources/*" element={<Resources />} />
+            <Route path="/masoom" element={<MasoomPage />} />
             
             {/* BuddySafe awareness pages - accessible to all users */}
             <Route path="/cyberbullying-awareness" element={<CyberbullyingAwareness />} />
