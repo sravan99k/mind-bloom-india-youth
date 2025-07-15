@@ -16,8 +16,8 @@ const MasoomPage = () => {
   const CyberbullyingContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Cyberbullying Awareness</h2>
-        <p className="text-lg text-gray-600">Understanding and preventing online harassment</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Digital Safety & Cyberbullying Awareness</h2>
+        <p className="text-lg text-gray-600">Stay safe online and protect yourself from digital threats</p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
@@ -27,7 +27,7 @@ const MasoomPage = () => {
         <CardContent>
           <p className="text-blue-800 leading-relaxed mb-4">
             Cyberbullying is when someone uses phones, computers, or social media to hurt, 
-            embarrass, or scare another person. This can include:
+            embarrass, or scare another person. Remember: <strong>Bullying is usually done by someone you know!</strong>
           </p>
           <ul className="space-y-2 text-blue-800">
             <li className="flex items-start">
@@ -50,33 +50,109 @@ const MasoomPage = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-orange-200 bg-orange-50">
         <CardHeader>
-          <CardTitle className="text-xl text-gray-900">Prevention Tips</CardTitle>
+          <CardTitle className="text-xl text-orange-900">Online Threats You Should Know</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-3 text-gray-700">
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              Think before you post - would you say it face-to-face?
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              Keep passwords private and change them regularly
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              Only accept friend requests from people you actually know
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              Use privacy settings to control who can contact you
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">✓</span>
-              Report and block users who are being mean to you
-            </li>
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-white rounded border border-orange-200">
+              <h4 className="font-semibold text-orange-800 mb-2">Cyber Grooming</h4>
+              <p className="text-sm text-orange-700 mb-2">When strangers build fake trust to harm you</p>
+              <ul className="text-xs text-orange-600 space-y-1">
+                <li>• Constant chatting and attention</li>
+                <li>• Asking for personal information</li>
+                <li>• Wanting to keep conversations secret</li>
+                <li>• Asking for photos or videos</li>
+              </ul>
+            </div>
+            <div className="p-4 bg-white rounded border border-orange-200">
+              <h4 className="font-semibold text-orange-800 mb-2">Phishing Tricks</h4>
+              <p className="text-sm text-orange-700 mb-2">Fake messages to steal your information</p>
+              <ul className="text-xs text-orange-600 space-y-1">
+                <li>• <strong>Phishing:</strong> Fake emails/websites</li>
+                <li>• <strong>Smishing:</strong> Fake text messages</li>
+                <li>• <strong>Vishing:</strong> Fake phone calls</li>
+                <li>• <strong>Catfishing:</strong> Fake online profiles</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl text-gray-900">Simple Safety Rules</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-green-800 mb-3">✅ DO</h4>
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Only chat with real-life friends
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Tell a trusted adult if something feels wrong
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Keep passwords private
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Block and report mean people
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">✓</span>
+                  Think before you post anything
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-red-800 mb-3">❌ DON'T</h4>
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-red-600 mr-2">✗</span>
+                  Share personal information (full name, address, school)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-600 mr-2">✗</span>
+                  Meet strangers from the internet
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-600 mr-2">✗</span>
+                  Open emails from unknown people
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-600 mr-2">✗</span>
+                  Respond to cyberbullies (just block them)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-600 mr-2">✗</span>
+                  Download unknown files or apps
+                </li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-purple-200 bg-purple-50">
+        <CardHeader>
+          <CardTitle className="text-xl text-purple-900">Remember This!</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center p-4 bg-white rounded border border-purple-200">
+            <p className="text-purple-800 font-medium mb-2">
+              🌐 The Internet is like a public place - not everything you see is real!
+            </p>
+            <p className="text-purple-700">
+              Just like you wouldn't talk to strangers in real life, don't trust strangers online.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -90,8 +166,9 @@ const MasoomPage = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { name: "Cyber Crime Helpline", number: "1930", desc: "Report cyberbullying and online crimes" },
-              { name: "Childline India", number: "1098", desc: "Help for children in difficult situations" }
+              { name: "Childline India", number: "1098", desc: "24/7 help for children in trouble" },
+              { name: "Emergency Services", number: "112", desc: "Police, Fire, Medical Emergency" },
+              { name: "Cyber Crime Helpline", number: "1930", desc: "Report online crimes and bullying" }
             ].map((contact, index) => (
               <div key={index} className="p-3 bg-white rounded border border-red-200">
                 <div className="font-medium text-red-800">{contact.name}</div>
@@ -106,6 +183,11 @@ const MasoomPage = () => {
               </div>
             ))}
           </div>
+          <div className="mt-4 p-3 bg-white rounded border border-red-200">
+            <p className="text-sm text-red-700">
+              <strong>Report Online Crimes:</strong> Visit <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" className="underline">cybercrime.gov.in</a>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -114,130 +196,76 @@ const MasoomPage = () => {
   const CSAContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Child Sexual Abuse Awareness</h2>
-        <p className="text-lg text-gray-600">Understanding, preventing, and responding to child sexual abuse</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Child Sexual Abuse (CSA) Awareness</h2>
+        <p className="text-lg text-gray-600">Understanding, preventing, and staying safe</p>
       </div>
 
-      <Card className="border-red-200 bg-red-50">
+      <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-red-900">Basic Facts About Child Sexual Abuse</CardTitle>
+          <CardTitle className="text-xl text-blue-900">What is Child Sexual Abuse (CSA)?</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4 text-red-800">
-            <div className="p-4 bg-white rounded border border-red-200">
-              <h4 className="font-semibold mb-2">Myth vs. Reality</h4>
-              <p className="mb-2"><strong>FALSE:</strong> Sexual abuse generally occurs in unfamiliar surroundings by strangers</p>
-              <p><strong>FACT:</strong> 85% of abuse occurs in known surroundings (home/school) by known people (family/relatives or family friends)</p>
+          <p className="text-blue-800 leading-relaxed mb-4">
+            CSA is when an adult or older person does sexual things with a child. This is wrong and against the law.
+            <strong> Important: It usually happens with people you know, not strangers!</strong>
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-white rounded border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2">Key Facts</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• Both girls AND boys can be victims</li>
+                <li>• 85% happens with people you know</li>
+                <li>• Most vulnerable ages: 3-8 and 11-15 years</li>
+                <li>• Many children don't report it (53% keep it secret)</li>
+              </ul>
             </div>
-            <div className="p-4 bg-white rounded border border-red-200">
-              <h4 className="font-semibold mb-2">Who is Affected?</h4>
-              <p className="mb-2"><strong>Girls:</strong> 53% of victims</p>
-              <p><strong>Boys:</strong> 47% of victims</p>
-              <p className="text-sm mt-2">Both girls and boys can be victims of sexual abuse</p>
-            </div>
-            <div className="p-4 bg-white rounded border border-red-200">
-              <h4 className="font-semibold mb-2">Most Vulnerable Ages</h4>
-              <p className="mb-1">• Most vulnerable: 3-8 years and 11-15 years</p>
-              <p>• Most reported cases: 5-12 years</p>
+            <div className="p-4 bg-white rounded border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2">Types of Abuse</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• <strong>Contact:</strong> Inappropriate touching</li>
+                <li>• <strong>Non-contact:</strong> Showing inappropriate pictures</li>
+                <li>• <strong>Online:</strong> Sending inappropriate messages</li>
+                <li>• <strong>Grooming:</strong> Building fake trust to harm</li>
+              </ul>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl text-gray-900">What is Child Sexual Abuse?</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Child Sexual Abuse is involvement of a child in sexual activity:
-          </p>
-          <ul className="space-y-2 text-gray-700">
-            <li className="flex items-start">
-              <span className="text-red-600 mr-2">•</span>
-              That he/she does not fully comprehend
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-600 mr-2">•</span>
-              Is unable to give informed consent
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-600 mr-2">•</span>
-              Where the child is not developmentally prepared
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-600 mr-2">•</span>
-              That violates laws or social taboos of society
-            </li>
-          </ul>
         </CardContent>
       </Card>
 
       <Card className="border-orange-200 bg-orange-50">
         <CardHeader>
-          <CardTitle className="text-xl text-orange-900">Warning Signs</CardTitle>
+          <CardTitle className="text-xl text-orange-900">Warning Signs - Tell a Trusted Adult If You Notice These</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">Behavioral Signs</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">How You Might Feel</h4>
               <ul className="text-sm text-orange-700 space-y-1">
-                <li>• Sudden unexplained fears</li>
-                <li>• Fear of being touched</li>
-                <li>• Changes in academic performance</li>
-                <li>• Self-injury</li>
-                <li>• Sleep disturbances</li>
+                <li>• Sudden fears or anxiety</li>
+                <li>• Not wanting to be touched</li>
+                <li>• Feeling sad or angry often</li>
+                <li>• Problems sleeping</li>
+                <li>• Not wanting to go to school</li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-orange-800 mb-2">Physical Signs</h4>
               <ul className="text-sm text-orange-700 space-y-1">
+                <li>• Pain in private areas</li>
+                <li>• Frequent stomach aches</li>
+                <li>• Eating too much or too little</li>
                 <li>• Problems walking or sitting</li>
-                <li>• Pain in stomach/genital areas</li>
-                <li>• Frequent urinary tract infections</li>
-                <li>• Strong body odor</li>
-                <li>• Sores around mouth</li>
+                <li>• Getting sick often</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">Emotional Signs</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">Behavior Changes</h4>
               <ul className="text-sm text-orange-700 space-y-1">
-                <li>• Extreme anger</li>
-                <li>• Anxiety, depression</li>
-                <li>• Low self-esteem</li>
-                <li>• Tics, phobias</li>
-                <li>• Obsessions</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-blue-200 bg-blue-50">
-        <CardHeader>
-          <CardTitle className="text-xl text-blue-900">POCSO Act (2012) - Legal Protection</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-blue-800 mb-4">
-            The Protection of Children from Sexual Offences Act provides protection to all children under 18 years:
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className="p-3 bg-white rounded border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">Offences & Punishments</h4>
-              <ul className="text-blue-700 space-y-1">
-                <li>• Sexual Assault: 3-5 years</li>
-                <li>• Penetrative Sexual Assault: 7 years to Life</li>
-                <li>• Sexual Harassment: 3 years</li>
-                <li>• Child Pornography: 5-7 years</li>
-              </ul>
-            </div>
-            <div className="p-3 bg-white rounded border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">Key Features</h4>
-              <ul className="text-blue-700 space-y-1">
-                <li>• Non-bailable offence</li>
-                <li>• Child-friendly procedures</li>
-                <li>• Media cannot disclose identity</li>
-                <li>• Burden of proof on accused</li>
+                <li>• Becoming very quiet or aggressive</li>
+                <li>• Not wanting to be around certain people</li>
+                <li>• Having "secrets" they can't tell</li>
+                <li>• Acting much older or younger</li>
+                <li>• Hurting themselves</li>
               </ul>
             </div>
           </div>
@@ -246,35 +274,78 @@ const MasoomPage = () => {
 
       <Card className="border-green-200 bg-green-50">
         <CardHeader>
-          <CardTitle className="text-xl text-green-900">What Can We Do?</CardTitle>
+          <CardTitle className="text-xl text-green-900">Body Safety Rules - What Every Child Should Know</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-semibold text-green-800 mb-2">Tell the Child</h4>
-              <ul className="text-green-700 space-y-1">
-                <li>• It is never their fault</li>
-                <li>• You will believe and protect them</li>
-                <li>• You will never reject or punish them</li>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 bg-white rounded border border-green-200">
+              <h4 className="font-semibold text-green-800 mb-3">Your Body Belongs to YOU!</h4>
+              <ul className="text-green-700 space-y-2">
+                <li>• You have the right to say "NO" to unwanted touch</li>
+                <li>• Trust your feelings - if something feels wrong, it probably is</li>
+                <li>• No one should touch your private parts</li>
+                <li>• No one should ask you to touch their private parts</li>
+                <li>• You should never keep "body secrets"</li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold text-green-800 mb-2">Teach the Child</h4>
-              <ul className="text-green-700 space-y-1">
-                <li>• About inappropriate touch</li>
-                <li>• About boundaries and consent</li>
-                <li>• How to tell a safe adult</li>
+            <div className="p-4 bg-white rounded border border-green-200">
+              <h4 className="font-semibold text-green-800 mb-3">If Someone Makes You Uncomfortable</h4>
+              <ul className="text-green-700 space-y-2">
+                <li>• Say "NO" loudly and clearly</li>
+                <li>• Get away from that person</li>
+                <li>• Tell a trusted adult immediately</li>
+                <li>• Keep telling until someone believes you</li>
+                <li>• Remember: It's NEVER your fault!</li>
               </ul>
             </div>
           </div>
         </CardContent>
       </Card>
 
+      <Card className="border-purple-200 bg-purple-50">
+        <CardHeader>
+          <CardTitle className="text-xl text-purple-900">POCSO Act - Your Legal Protection</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-purple-800 mb-4">
+            The POCSO Act 2012 protects ALL children under 18 years from sexual abuse.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 bg-white rounded border border-purple-200">
+              <h4 className="font-semibold text-purple-800 mb-2">What it Covers</h4>
+              <ul className="text-sm text-purple-700 space-y-1">
+                <li>• Sexual assault (3-5 years punishment)</li>
+                <li>• Severe sexual assault (7 years to life)</li>
+                <li>• Sexual harassment (3 years)</li>
+                <li>• Child pornography (5-7 years)</li>
+              </ul>
+            </div>
+            <div className="p-3 bg-white rounded border border-purple-200">
+              <h4 className="font-semibold text-purple-800 mb-2">Your Rights</h4>
+              <ul className="text-sm text-purple-700 space-y-1">
+                <li>• Police must help you</li>
+                <li>• Your identity stays private</li>
+                <li>• You can give statements at home</li>
+                <li>• The court will believe you</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Alert className="border-yellow-200 bg-yellow-50">
+        <AlertTriangle className="h-4 w-4 text-yellow-600" />
+        <AlertDescription className="text-yellow-800">
+          <strong>Remember:</strong> If someone hurts you or makes you uncomfortable, it's NOT your fault! 
+          Tell a trusted adult like your parents, teacher, or school counselor. Keep telling until someone helps you.
+        </AlertDescription>
+      </Alert>
+
       <Card className="border-red-200 bg-red-50">
         <CardHeader>
           <CardTitle className="text-xl text-red-900 flex items-center gap-2">
             <Phone className="w-5 h-5" />
-            Emergency Helplines
+            Emergency Helplines - Save These Numbers!
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -298,21 +369,26 @@ const MasoomPage = () => {
               </div>
             ))}
           </div>
+          <div className="mt-4 p-3 bg-white rounded border border-red-200">
+            <p className="text-sm text-red-700">
+              <strong>POCSO Portal:</strong> Visit <a href="https://pocso.ncpcrweb.in" target="_blank" rel="noopener noreferrer" className="underline">pocso.ncpcrweb.in</a> to report abuse
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="border-purple-200 bg-purple-50">
+      <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-purple-900">Our Pledge</CardTitle>
+          <CardTitle className="text-xl text-blue-900">Our Promise to You</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center p-6 bg-white rounded border border-purple-200">
-            <h3 className="font-bold text-purple-800 mb-4">I PLEDGE TO KEEP CHILDREN SAFE BY:</h3>
-            <div className="text-purple-700 space-y-2">
-              <p>• Learning about personal safety of children</p>
-              <p>• Talking to children about child safety</p>
-              <p>• Ensuring neighborhood safety for children</p>
-              <p>• Supporting any victim of abuse I come across</p>
+          <div className="text-center p-6 bg-white rounded border border-blue-200">
+            <h3 className="font-bold text-blue-800 mb-4">WE PLEDGE TO KEEP CHILDREN SAFE BY:</h3>
+            <div className="text-blue-700 space-y-2">
+              <p>• Teaching you about personal safety</p>
+              <p>• Listening to you when you need help</p>
+              <p>• Making sure your school and neighborhood are safe</p>
+              <p>• Supporting any child who needs help</p>
             </div>
           </div>
         </CardContent>
@@ -343,7 +419,7 @@ const MasoomPage = () => {
             SAVE CHILDHOOD
           </h1>
           <h2 className="text-2xl font-semibold text-blue-600 mb-2">
-            FIGHT AGAINST CHILD SEXUAL ABUSE
+            FIGHT AGAINST CHILD SEXUAL ABUSE & CYBERBULLYING
           </h2>
         </div>
 
@@ -362,25 +438,22 @@ const MasoomPage = () => {
                   <div className="p-4 bg-white rounded border border-blue-200">
                     <h3 className="font-bold text-orange-600 mb-2">Young Indians (Yi)</h3>
                     <p className="text-sm text-gray-700">
-                      Young Indians is the youth wing of the Confederation of Indian Industry (CII). 
-                      We are a movement of young leaders committed to building a better India through 
-                      active citizenship and social responsibility.
+                      Young Indians is the youth wing of CII. We are young leaders working to make India better 
+                      by helping our communities and being responsible citizens.
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded border border-blue-200">
-                    <h3 className="font-bold text-blue-600 mb-2">MASOOM</h3>
+                    <h3 className="font-bold text-blue-600 mb-2">MASOOM (Making Schools Safe)</h3>
                     <p className="text-sm text-gray-700">
-                      MASOOM (Making Schools Safe) is an initiative focused on creating safer 
-                      environments for children in schools. We work to educate, prevent, and respond 
-                      to various forms of abuse and harassment affecting children.
+                      MASOOM works to make schools safer for children. We teach about safety, prevent abuse, 
+                      and help children who face problems like bullying or harassment.
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded border border-blue-200">
                     <h3 className="font-bold text-purple-600 mb-2">CII</h3>
                     <p className="text-sm text-gray-700">
-                      The Confederation of Indian Industry is a premier business association that 
-                      works to create and sustain an environment conducive to the development of India, 
-                      partnering with industry, government, and civil society.
+                      The Confederation of Indian Industry works with businesses and government to make India 
+                      a better place for everyone to live and work.
                     </p>
                   </div>
                 </div>
@@ -397,10 +470,8 @@ const MasoomPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-green-800 leading-relaxed text-center text-lg">
-                  Together, we are committed to creating a safer world for children by raising awareness, 
-                  providing education, and building support systems to prevent child abuse and cyberbullying. 
-                  Every child deserves to grow up in a safe, supportive environment where they can thrive 
-                  and reach their full potential.
+                  Together, we work to keep children safe by teaching them about dangers, providing help when needed, 
+                  and making sure every child can grow up in a safe environment where they can learn and be happy.
                 </p>
               </CardContent>
             </Card>
@@ -415,9 +486,9 @@ const MasoomPage = () => {
                   <CardTitle className="text-xl text-blue-900 flex items-center gap-3">
                     <Shield className="w-8 h-8" />
                     <div className="flex-1">
-                      Cyberbullying Awareness
+                      Digital Safety & Cyberbullying
                       <CardDescription className="text-blue-700 mt-1">
-                        Learn about online safety and prevention
+                        Learn how to stay safe online
                       </CardDescription>
                     </div>
                     <ArrowRight className="w-5 h-5 text-blue-600" />
@@ -425,8 +496,8 @@ const MasoomPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-blue-800">
-                    Understanding cyberbullying, its impact, and how to protect yourself and others online. 
-                    Learn practical strategies for staying safe in digital spaces.
+                    Learn about online safety, cyberbullying, and how to protect yourself from digital threats. 
+                    Understand what to do if someone is mean to you online.
                   </p>
                 </CardContent>
               </Card>
@@ -441,7 +512,7 @@ const MasoomPage = () => {
                     <div className="flex-1">
                       Child Sexual Abuse Prevention
                       <CardDescription className="text-red-700 mt-1">
-                        Critical awareness and protection information
+                        Important safety information for children
                       </CardDescription>
                     </div>
                     <ArrowRight className="w-5 h-5 text-red-600" />
@@ -449,8 +520,8 @@ const MasoomPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-red-800">
-                    Essential information about recognizing, preventing, and responding to child sexual abuse. 
-                    Understanding your rights and available support systems.
+                    Learn about body safety, how to recognize inappropriate behavior, and what to do if someone 
+                    makes you uncomfortable. Know your rights and how to get help.
                   </p>
                 </CardContent>
               </Card>
@@ -460,9 +531,9 @@ const MasoomPage = () => {
             <Alert className="border-yellow-200 bg-yellow-50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
-                <strong>Did you know?</strong> Only 47% of children report abuse. It's crucial that we create 
-                safe environments where children feel comfortable seeking help. Every adult has a role to play 
-                in protecting children.
+                <strong>Did you know?</strong> Many children don't report when bad things happen to them. 
+                We want to create safe places where children feel comfortable asking for help. 
+                Every adult should help protect children.
               </AlertDescription>
             </Alert>
           </div>
