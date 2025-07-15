@@ -1,108 +1,76 @@
-
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight } from "lucide-react";
+import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 
-// Declare global Google Translate functions
-declare global {
-  interface Window {
-    google: any;
-    googleTranslateElementInit: () => void;
-  }
-}
-
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
-  const [translateLoaded, setTranslateLoaded] = useState(false);
-  const translateElementRef = useRef<HTMLDivElement>(null);
-  const scriptLoadedRef = useRef(false);
-
-  useEffect(() => {
-    // Prevent multiple initializations
-    if (scriptLoadedRef.current) return;
-
-    const initializeGoogleTranslate = () => {
-      console.log('Initializing Google Translate...');
-      
-      // Clean up any existing translate elements first
-      const existingElement = document.getElementById('google_translate_element');
-      if (existingElement) {
-        try {
-          existingElement.innerHTML = '';
-        } catch (error) {
-          console.warn('Error cleaning existing translate element:', error);
-        }
-      }
-
-      // Initialize Google Translate
-      window.googleTranslateElementInit = () => {
-        try {
-          if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-            const translateElement = new window.google.translate.TranslateElement({
-              pageLanguage: 'en',
-              includedLanguages: 'en,hi',
-              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false,
-              multilanguagePage: true
-            }, 'google_translate_element');
-            
-            console.log('Google Translate initialized successfully');
-            setTranslateLoaded(true);
-          }
-        } catch (error) {
-          console.error('Google Translate initialization error:', error);
-        }
-      };
-
-      // Load Google Translate script if not already loaded
-      if (!document.getElementById('google-translate-script')) {
-        const script = document.createElement('script');
-        script.id = 'google-translate-script';
-        script.type = 'text/javascript';
-        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        script.async = true;
-        script.defer = true;
-        
-        script.onload = () => {
-          console.log('Google Translate script loaded');
-          scriptLoadedRef.current = true;
-        };
-        
-        script.onerror = () => {
-          console.error('Failed to load Google Translate script');
-        };
-        
-        document.head.appendChild(script);
-      } else {
-        // Script already exists, just initialize
-        if (window.googleTranslateElementInit) {
-          window.googleTranslateElementInit();
-        }
-      }
-    };
-
-    // Initialize after a small delay to ensure DOM is ready
-    const timeoutId = setTimeout(initializeGoogleTranslate, 1000);
-
-    return () => {
-      clearTimeout(timeoutId);
-      // Don't remove script or clean up DOM elements in cleanup
-      // This prevents the removeChild error
-    };
-  }, []);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
   };
 
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'en' ? 'hi' : 'en');
+  };
+
+  const t = {
+    en: {
+      saveChildhood: "SAVE CHILDHOOD",
+      fightAgainst: "FIGHT AGAINST CHILD SEXUAL ABUSE & CYBERBULLYING",
+      language: "Language",
+      aboutOrgs: "About Our Organizations",
+      youngIndians: "Young Indians is the youth wing of CII. We are young leaders working to make India better by helping our communities and being responsible citizens.",
+      masoom: "MASOOM works to make schools safer for children. We teach about safety, prevent abuse, and help children who face problems like bullying or harassment.",
+      cii: "The Confederation of Indian Industry works with businesses and government to make India a better place for everyone to live and work.",
+      mission: "Our Mission",
+      missionText: "Together, we work to keep children safe by teaching them about dangers, providing help when needed, and making sure every child can grow up in a safe environment where they can learn and be happy.",
+      digitalSafety: "Digital Safety & Cyberbullying",
+      digitalSafetyDesc: "Learn how to stay safe online",
+      digitalSafetyContent: "Learn about online safety, cyberbullying, and how to protect yourself from digital threats. Understand what to do if someone is mean to you online.",
+      csaPrevention: "Child Sexual Abuse Prevention",
+      csaPreventionDesc: "Important safety information for children",
+      csaPreventionContent: "Learn about body safety, how to recognize inappropriate behavior, and what to do if someone makes you uncomfortable. Know your rights and how to get help.",
+      didYouKnow: "Did you know?",
+      didYouKnowText: "Many children don't report when bad things happen to them. We want to create safe places where children feel comfortable asking for help. Every adult should help protect children.",
+      backToMain: "← Back to Main Page"
+    },
+    hi: {
+      saveChildhood: "बचपन बचाएं",
+      fightAgainst: "बाल यौन शोषण और साइबर बुलिंग के खिलाफ लड़ाई",
+      language: "भाषा",
+      aboutOrgs: "हमारे संगठनों के बारे में",
+      youngIndians: "यंग इंडियंस CII का युवा विंग है। हम युवा नेता हैं जो अपने समुदायों की मदद करके और जिम्मेदार नागरिक बनकर भारत को बेहतर बनाने के लिए काम कर रहे हैं।",
+      masoom: "मासूम स्कूलों को बच्चों के लिए सुरक्षित बनाने का काम करता है। हम सुरक्षा के बारे में सिखाते हैं, दुर्व्यवहार को रोकते हैं, और उन बच्चों की मदद करते हैं जो बुलिंग या उत्पीड़न जैसी समस्याओं का सामना करते हैं।",
+      cii: "भारतीय उद्योग परिसंघ व्यवसायों और सरकार के साथ मिलकर भारत को सभी के लिए रहने और काम करने के लिए एक बेहतर जगह बनाने का काम करता है।",
+      mission: "हमारा मिशन",
+      missionText: "मिलकर, हम बच्चों को खतरों के बारे में सिखाकर, जरूरत पड़ने पर मदद प्रदान करके, और यह सुनिश्चित करके कि हर बच्चा एक सुरक्षित वातावरण में बड़ा हो सके जहां वे सीख और खुश रह सकें, बच्चों को सुरक्षित रखने का काम करते हैं।",
+      digitalSafety: "डिजिटल सुरक्षा और साइबर बुलिंग",
+      digitalSafetyDesc: "ऑनलाइन सुरक्षित रहना सीखें",
+      digitalSafetyContent: "ऑनलाइन सुरक्षा, साइबर बुलिंग के बारे में जानें और डिजिटल खतरों से खुद को कैसे बचाएं। समझें कि अगर कोई आपके साथ ऑनलाइन बुरा व्यवहार करे तो क्या करना चाहिए।",
+      csaPrevention: "बाल यौन शोषण की रोकथाम",
+      csaPreventionDesc: "बच्चों के लिए महत्वपूर्ण सुरक्षा जानकारी",
+      csaPreventionContent: "शरीर की सुरक्षा के बारे में जानें, अनुचित व्यवहार को कैसे पहचानें, और अगर कोई आपको असहज महसूस कराए तो क्या करें। अपने अधिकारों को जानें और मदद कैसे प्राप्त करें।",
+      didYouKnow: "क्या आपको पता है?",
+      didYouKnowText: "कई बच्चे रिपोर्ट नहीं करते जब उनके साथ बुरी चीजें होती हैं। हम ऐसी सुरक्षित जगह बनाना चाहते हैं जहां बच्चे मदद मांगने में सहज महसूस करें। हर वयस्क को बच्चों की सुरक्षा में मदद करनी चाहिए।",
+      backToMain: "← मुख्य पृष्ठ पर वापस"
+    }
+  };
+
+  const currentLang = t[language];
+
   const CyberbullyingContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Digital Safety & Cyberbullying Awareness</h2>
-        <p className="text-lg text-gray-600">Stay safe online and protect yourself from digital threats</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          {language === 'en' ? 'Digital Safety & Cyberbullying Awareness' : 'डिजिटल सुरक्षा और साइबर बुलिंग जागरूकता'}
+        </h2>
+        <p className="text-lg text-gray-600">
+          {language === 'en' ? 'Stay safe online and protect yourself from digital threats' : 'ऑनलाइन सुरक्षित रहें और डिजिटल खतरों से खुद को बचाएं'}
+        </p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
@@ -281,8 +249,12 @@ const MasoomPage = () => {
   const CSAContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Child Sexual Abuse (CSA) Awareness</h2>
-        <p className="text-lg text-gray-600">Understanding, preventing, and staying safe</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          {language === 'en' ? 'Child Sexual Abuse (CSA) Awareness' : 'बाल यौन शोषण (CSA) जागरूकता'}
+        </h2>
+        <p className="text-lg text-gray-600">
+          {language === 'en' ? 'Understanding, preventing, and staying safe' : 'समझना, रोकना और सुरक्षित रहना'}
+        </p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
@@ -484,20 +456,21 @@ const MasoomPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="max-w-6xl mx-auto p-6 py-12">
-        {/* Google Translate Widget - positioned at top right */}
+        {/* Language Toggle - positioned at top right */}
         <div className="flex justify-end mb-6">
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3">
-            <div className="text-sm text-gray-600 mb-2 font-medium">Language / भाषा:</div>
-            <div 
-              id="google_translate_element" 
-              ref={translateElementRef}
-              className="min-h-[35px] flex items-center justify-center"
-              style={{ minWidth: '200px' }}
-            >
-              {!translateLoaded && (
-                <div className="text-sm text-gray-500 animate-pulse">Loading translator...</div>
-              )}
+            <div className="text-sm text-gray-600 mb-2 font-medium flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              {currentLang.language}:
             </div>
+            <Button
+              onClick={toggleLanguage}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {language === 'en' ? 'हिंदी' : 'English'}
+            </Button>
           </div>
         </div>
 
@@ -518,10 +491,10 @@ const MasoomPage = () => {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            SAVE CHILDHOOD
+            {currentLang.saveChildhood}
           </h1>
           <h2 className="text-2xl font-semibold text-blue-600 mb-2">
-            FIGHT AGAINST CHILD SEXUAL ABUSE & CYBERBULLYING
+            {currentLang.fightAgainst}
           </h2>
         </div>
 
@@ -532,7 +505,7 @@ const MasoomPage = () => {
               <CardHeader>
                 <CardTitle className="text-2xl text-blue-900 flex items-center gap-2">
                   <Users className="w-6 h-6" />
-                  About Our Organizations
+                  {currentLang.aboutOrgs}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -540,22 +513,19 @@ const MasoomPage = () => {
                   <div className="p-4 bg-white rounded border border-blue-200">
                     <h3 className="font-bold text-orange-600 mb-2">Young Indians (Yi)</h3>
                     <p className="text-sm text-gray-700">
-                      Young Indians is the youth wing of CII. We are young leaders working to make India better 
-                      by helping our communities and being responsible citizens.
+                      {currentLang.youngIndians}
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded border border-blue-200">
                     <h3 className="font-bold text-blue-600 mb-2">MASOOM (Making Schools Safe)</h3>
                     <p className="text-sm text-gray-700">
-                      MASOOM works to make schools safer for children. We teach about safety, prevent abuse, 
-                      and help children who face problems like bullying or harassment.
+                      {currentLang.masoom}
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded border border-blue-200">
                     <h3 className="font-bold text-purple-600 mb-2">CII</h3>
                     <p className="text-sm text-gray-700">
-                      The Confederation of Indian Industry works with businesses and government to make India 
-                      a better place for everyone to live and work.
+                      {currentLang.cii}
                     </p>
                   </div>
                 </div>
@@ -567,13 +537,12 @@ const MasoomPage = () => {
               <CardHeader>
                 <CardTitle className="text-xl text-green-900 flex items-center gap-2">
                   <Heart className="w-5 h-5" />
-                  Our Mission
+                  {currentLang.mission}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-green-800 leading-relaxed text-center text-lg">
-                  Together, we work to keep children safe by teaching them about dangers, providing help when needed, 
-                  and making sure every child can grow up in a safe environment where they can learn and be happy.
+                  {currentLang.missionText}
                 </p>
               </CardContent>
             </Card>
@@ -588,9 +557,9 @@ const MasoomPage = () => {
                   <CardTitle className="text-xl text-blue-900 flex items-center gap-3">
                     <Shield className="w-8 h-8" />
                     <div className="flex-1">
-                      Digital Safety & Cyberbullying
+                      {currentLang.digitalSafety}
                       <CardDescription className="text-blue-700 mt-1">
-                        Learn how to stay safe online
+                        {currentLang.digitalSafetyDesc}
                       </CardDescription>
                     </div>
                     <ArrowRight className="w-5 h-5 text-blue-600" />
@@ -598,8 +567,7 @@ const MasoomPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-blue-800">
-                    Learn about online safety, cyberbullying, and how to protect yourself from digital threats. 
-                    Understand what to do if someone is mean to you online.
+                    {currentLang.digitalSafetyContent}
                   </p>
                 </CardContent>
               </Card>
@@ -612,9 +580,9 @@ const MasoomPage = () => {
                   <CardTitle className="text-xl text-red-900 flex items-center gap-3">
                     <Shield className="w-8 h-8" />
                     <div className="flex-1">
-                      Child Sexual Abuse Prevention
+                      {currentLang.csaPrevention}
                       <CardDescription className="text-red-700 mt-1">
-                        Important safety information for children
+                        {currentLang.csaPreventionDesc}
                       </CardDescription>
                     </div>
                     <ArrowRight className="w-5 h-5 text-red-600" />
@@ -622,8 +590,7 @@ const MasoomPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-red-800">
-                    Learn about body safety, how to recognize inappropriate behavior, and what to do if someone 
-                    makes you uncomfortable. Know your rights and how to get help.
+                    {currentLang.csaPreventionContent}
                   </p>
                 </CardContent>
               </Card>
@@ -633,9 +600,7 @@ const MasoomPage = () => {
             <Alert className="border-yellow-200 bg-yellow-50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
-                <strong>Did you know?</strong> Many children don't report when bad things happen to them. 
-                We want to create safe places where children feel comfortable asking for help. 
-                Every adult should help protect children.
+                <strong>{currentLang.didYouKnow}</strong> {currentLang.didYouKnowText}
               </AlertDescription>
             </Alert>
           </div>
@@ -648,7 +613,7 @@ const MasoomPage = () => {
               variant="outline" 
               className="mb-6"
             >
-              ← Back to Main Page
+              {currentLang.backToMain}
             </Button>
             <CyberbullyingContent />
           </div>
@@ -661,7 +626,7 @@ const MasoomPage = () => {
               variant="outline" 
               className="mb-6"
             >
-              ← Back to Main Page
+              {currentLang.backToMain}
             </Button>
             <CSAContent />
           </div>
