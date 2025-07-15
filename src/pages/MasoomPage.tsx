@@ -1,13 +1,55 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 
+// Declare global Google Translate functions
+declare global {
+  interface Window {
+    google: any;
+    googleTranslateElementInit: () => void;
+  }
+}
+
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
+
+  useEffect(() => {
+    // Initialize Google Translate
+    const addGoogleTranslateScript = () => {
+      if (!document.getElementById('google-translate-script')) {
+        const script = document.createElement('script');
+        script.id = 'google-translate-script';
+        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    };
+
+    // Google Translate initialization function
+    window.googleTranslateElementInit = () => {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi',
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    };
+
+    addGoogleTranslateScript();
+
+    return () => {
+      // Cleanup
+      const script = document.getElementById('google-translate-script');
+      if (script) {
+        script.remove();
+      }
+    };
+  }, []);
 
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
@@ -399,6 +441,14 @@ const MasoomPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="max-w-6xl mx-auto p-6 py-12">
+        {/* Google Translate Widget - positioned at top right */}
+        <div className="flex justify-end mb-4">
+          <div 
+            id="google_translate_element" 
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-2"
+          ></div>
+        </div>
+
         {/* Header with Logos */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6 space-x-8">
