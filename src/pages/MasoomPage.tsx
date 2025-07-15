@@ -15,62 +15,82 @@ declare global {
 
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
+  const [translateLoaded, setTranslateLoaded] = useState(false);
 
   useEffect(() => {
-    // Clean up any existing translate elements
-    const existingElement = document.getElementById('google_translate_element');
-    if (existingElement) {
-      existingElement.innerHTML = '';
-    }
+    // Clean up any existing translate elements and scripts
+    const cleanupExisting = () => {
+      const existingElement = document.getElementById('google_translate_element');
+      if (existingElement) {
+        existingElement.innerHTML = '';
+      }
 
-    // Remove existing script if present
-    const existingScript = document.getElementById('google-translate-script');
-    if (existingScript) {
-      existingScript.remove();
-    }
+      const existingScript = document.getElementById('google-translate-script');
+      if (existingScript) {
+        existingScript.remove();
+      }
 
-    // Initialize Google Translate
-    const addGoogleTranslateScript = () => {
-      const script = document.createElement('script');
-      script.id = 'google-translate-script';
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
+      // Clean up global function
+      if (window.googleTranslateElementInit) {
+        delete window.googleTranslateElementInit;
+      }
     };
+
+    cleanupExisting();
 
     // Google Translate initialization function
     window.googleTranslateElementInit = () => {
+      console.log('Initializing Google Translate...');
       try {
         if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-          new window.google.translate.TranslateElement({
+          const translateElement = new window.google.translate.TranslateElement({
             pageLanguage: 'en',
             includedLanguages: 'en,hi',
             layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false,
-            multilanguagePage: true
+            multilanguagePage: true,
+            gaTrack: true,
+            gaId: 'UA-XXXXX-X'
           }, 'google_translate_element');
+          
+          console.log('Google Translate initialized successfully');
+          setTranslateLoaded(true);
+        } else {
+          console.error('Google Translate API not available');
         }
       } catch (error) {
         console.error('Google Translate initialization error:', error);
       }
     };
 
-    // Add script with a delay to ensure DOM is ready
-    setTimeout(() => {
-      addGoogleTranslateScript();
-    }, 100);
+    // Load Google Translate script
+    const loadGoogleTranslateScript = () => {
+      const script = document.createElement('script');
+      script.id = 'google-translate-script';
+      script.type = 'text/javascript';
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = false;
+      script.defer = false;
+      
+      script.onload = () => {
+        console.log('Google Translate script loaded');
+      };
+      
+      script.onerror = () => {
+        console.error('Failed to load Google Translate script');
+      };
+      
+      document.head.appendChild(script);
+    };
+
+    // Load script with a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      loadGoogleTranslateScript();
+    }, 500);
 
     return () => {
-      // Cleanup
-      const script = document.getElementById('google-translate-script');
-      if (script) {
-        script.remove();
-      }
-      // Clean up global function
-      if (window.googleTranslateElementInit) {
-        delete window.googleTranslateElementInit;
-      }
+      clearTimeout(timeoutId);
+      cleanupExisting();
     };
   }, []);
 
@@ -465,12 +485,19 @@ const MasoomPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="max-w-6xl mx-auto p-6 py-12">
         {/* Google Translate Widget - positioned at top right */}
-        <div className="flex justify-end mb-4">
-          <div 
-            id="google_translate_element" 
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 min-h-[40px]"
-            style={{ minWidth: '200px' }}
-          ></div>
+        <div className="flex justify-end mb-6">
+          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3">
+            <div className="text-sm text-gray-600 mb-2 font-medium">Language / भाषा:</div>
+            <div 
+              id="google_translate_element" 
+              className="min-h-[35px] flex items-center justify-center"
+              style={{ minWidth: '200px' }}
+            >
+              {!translateLoaded && (
+                <div className="text-sm text-gray-500 animate-pulse">Loading translator...</div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Header with Logos */}
