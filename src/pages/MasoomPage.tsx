@@ -17,36 +17,59 @@ const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
 
   useEffect(() => {
+    // Clean up any existing translate elements
+    const existingElement = document.getElementById('google_translate_element');
+    if (existingElement) {
+      existingElement.innerHTML = '';
+    }
+
+    // Remove existing script if present
+    const existingScript = document.getElementById('google-translate-script');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
     // Initialize Google Translate
     const addGoogleTranslateScript = () => {
-      if (!document.getElementById('google-translate-script')) {
-        const script = document.createElement('script');
-        script.id = 'google-translate-script';
-        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        script.async = true;
-        document.head.appendChild(script);
-      }
+      const script = document.createElement('script');
+      script.id = 'google-translate-script';
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
     };
 
     // Google Translate initialization function
     window.googleTranslateElementInit = () => {
-      if (window.google && window.google.translate) {
-        new window.google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'en,hi',
-          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false
-        }, 'google_translate_element');
+      try {
+        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi',
+            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false,
+            multilanguagePage: true
+          }, 'google_translate_element');
+        }
+      } catch (error) {
+        console.error('Google Translate initialization error:', error);
       }
     };
 
-    addGoogleTranslateScript();
+    // Add script with a delay to ensure DOM is ready
+    setTimeout(() => {
+      addGoogleTranslateScript();
+    }, 100);
 
     return () => {
       // Cleanup
       const script = document.getElementById('google-translate-script');
       if (script) {
         script.remove();
+      }
+      // Clean up global function
+      if (window.googleTranslateElementInit) {
+        delete window.googleTranslateElementInit;
       }
     };
   }, []);
@@ -445,7 +468,8 @@ const MasoomPage = () => {
         <div className="flex justify-end mb-4">
           <div 
             id="google_translate_element" 
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-2"
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 min-h-[40px]"
+            style={{ minWidth: '200px' }}
           ></div>
         </div>
 
