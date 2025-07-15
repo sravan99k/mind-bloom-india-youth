@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight } from "lucide-react";
@@ -16,81 +17,80 @@ declare global {
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
   const [translateLoaded, setTranslateLoaded] = useState(false);
+  const translateElementRef = useRef<HTMLDivElement>(null);
+  const scriptLoadedRef = useRef(false);
 
   useEffect(() => {
-    // Clean up any existing translate elements and scripts
-    const cleanupExisting = () => {
+    // Prevent multiple initializations
+    if (scriptLoadedRef.current) return;
+
+    const initializeGoogleTranslate = () => {
+      console.log('Initializing Google Translate...');
+      
+      // Clean up any existing translate elements first
       const existingElement = document.getElementById('google_translate_element');
       if (existingElement) {
-        existingElement.innerHTML = '';
-      }
-
-      const existingScript = document.getElementById('google-translate-script');
-      if (existingScript) {
-        existingScript.remove();
-      }
-
-      // Clean up global function
-      if (window.googleTranslateElementInit) {
-        delete window.googleTranslateElementInit;
-      }
-    };
-
-    cleanupExisting();
-
-    // Google Translate initialization function
-    window.googleTranslateElementInit = () => {
-      console.log('Initializing Google Translate...');
-      try {
-        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-          const translateElement = new window.google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi',
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false,
-            multilanguagePage: true,
-            gaTrack: true,
-            gaId: 'UA-XXXXX-X'
-          }, 'google_translate_element');
-          
-          console.log('Google Translate initialized successfully');
-          setTranslateLoaded(true);
-        } else {
-          console.error('Google Translate API not available');
+        try {
+          existingElement.innerHTML = '';
+        } catch (error) {
+          console.warn('Error cleaning existing translate element:', error);
         }
-      } catch (error) {
-        console.error('Google Translate initialization error:', error);
+      }
+
+      // Initialize Google Translate
+      window.googleTranslateElementInit = () => {
+        try {
+          if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+            const translateElement = new window.google.translate.TranslateElement({
+              pageLanguage: 'en',
+              includedLanguages: 'en,hi',
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false,
+              multilanguagePage: true
+            }, 'google_translate_element');
+            
+            console.log('Google Translate initialized successfully');
+            setTranslateLoaded(true);
+          }
+        } catch (error) {
+          console.error('Google Translate initialization error:', error);
+        }
+      };
+
+      // Load Google Translate script if not already loaded
+      if (!document.getElementById('google-translate-script')) {
+        const script = document.createElement('script');
+        script.id = 'google-translate-script';
+        script.type = 'text/javascript';
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        script.async = true;
+        script.defer = true;
+        
+        script.onload = () => {
+          console.log('Google Translate script loaded');
+          scriptLoadedRef.current = true;
+        };
+        
+        script.onerror = () => {
+          console.error('Failed to load Google Translate script');
+        };
+        
+        document.head.appendChild(script);
+      } else {
+        // Script already exists, just initialize
+        if (window.googleTranslateElementInit) {
+          window.googleTranslateElementInit();
+        }
       }
     };
 
-    // Load Google Translate script
-    const loadGoogleTranslateScript = () => {
-      const script = document.createElement('script');
-      script.id = 'google-translate-script';
-      script.type = 'text/javascript';
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.async = false;
-      script.defer = false;
-      
-      script.onload = () => {
-        console.log('Google Translate script loaded');
-      };
-      
-      script.onerror = () => {
-        console.error('Failed to load Google Translate script');
-      };
-      
-      document.head.appendChild(script);
-    };
-
-    // Load script with a small delay to ensure DOM is ready
-    const timeoutId = setTimeout(() => {
-      loadGoogleTranslateScript();
-    }, 500);
+    // Initialize after a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(initializeGoogleTranslate, 1000);
 
     return () => {
       clearTimeout(timeoutId);
-      cleanupExisting();
+      // Don't remove script or clean up DOM elements in cleanup
+      // This prevents the removeChild error
     };
   }, []);
 
@@ -490,6 +490,7 @@ const MasoomPage = () => {
             <div className="text-sm text-gray-600 mb-2 font-medium">Language / भाषा:</div>
             <div 
               id="google_translate_element" 
+              ref={translateElementRef}
               className="min-h-[35px] flex items-center justify-center"
               style={{ minWidth: '200px' }}
             >
