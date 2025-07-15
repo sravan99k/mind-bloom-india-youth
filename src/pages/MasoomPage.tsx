@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -36,7 +37,167 @@ const MasoomPage = () => {
       csaPreventionContent: "Learn about body safety, how to recognize inappropriate behavior, and what to do if someone makes you uncomfortable. Know your rights and how to get help.",
       didYouKnow: "Did you know?",
       didYouKnowText: "Many children don't report when bad things happen to them. We want to create safe places where children feel comfortable asking for help. Every adult should help protect children.",
-      backToMain: "← Back to Main Page"
+      backToMain: "← Back to Main Page",
+      
+      // Cyberbullying section
+      cyberbullyingTitle: "Digital Safety & Cyberbullying Awareness",
+      cyberbullyingSubtitle: "Stay safe online and protect yourself from digital threats",
+      whatIsCyberbullying: "What is Cyberbullying?",
+      cyberbullyingDefinition: "Cyberbullying is when someone uses phones, computers, or social media to hurt, embarrass, or scare another person. Remember: Bullying is usually done by someone you know!",
+      cyberbullyingTypes: [
+        "Sending mean messages or comments",
+        "Sharing embarrassing photos or videos without permission",
+        "Spreading rumors or lies online",
+        "Excluding someone from online groups on purpose"
+      ],
+      onlineThreats: "Online Threats You Should Know",
+      cyberGrooming: "Cyber Grooming",
+      cyberGroomingDesc: "When strangers build fake trust to harm you",
+      groomingWarnings: [
+        "Constant chatting and attention",
+        "Asking for personal information",
+        "Wanting to keep conversations secret",
+        "Asking for photos or videos"
+      ],
+      phishingTricks: "Phishing Tricks",
+      phishingDesc: "Fake messages to steal your information",
+      phishingTypes: [
+        "Phishing: Fake emails/websites",
+        "Smishing: Fake text messages", 
+        "Vishing: Fake phone calls",
+        "Catfishing: Fake online profiles"
+      ],
+      safetyRules: "Simple Safety Rules",
+      doList: "✅ DO",
+      dontList: "❌ DON'T",
+      doItems: [
+        "Only chat with real-life friends",
+        "Tell a trusted adult if something feels wrong",
+        "Keep passwords private",
+        "Block and report mean people",
+        "Think before you post anything"
+      ],
+      dontItems: [
+        "Share personal information (full name, address, school)",
+        "Meet strangers from the internet",
+        "Open emails from unknown people",
+        "Respond to cyberbullies (just block them)",
+        "Download unknown files or apps"
+      ],
+      rememberThis: "Remember This!",
+      internetWarning: "🌐 The Internet is like a public place - not everything you see is real!",
+      strangerWarning: "Just like you wouldn't talk to strangers in real life, don't trust strangers online.",
+      getHelp: "Get Help Now",
+      
+      // CSA section
+      csaTitle: "Child Sexual Abuse (CSA) Awareness",
+      csaSubtitle: "Understanding, preventing, and staying safe",
+      whatIsCSA: "What is Child Sexual Abuse (CSA)?",
+      csaDefinition: "CSA is when an adult or older person does sexual things with a child. This is wrong and against the law. Important: It usually happens with people you know, not strangers!",
+      keyFacts: "Key Facts",
+      keyFactsList: [
+        "Both girls AND boys can be victims",
+        "85% happens with people you know",
+        "Most vulnerable ages: 3-8 and 11-15 years",
+        "Many children don't report it (53% keep it secret)"
+      ],
+      typesOfAbuse: "Types of Abuse",
+      abuseTypes: [
+        "Contact: Inappropriate touching",
+        "Non-contact: Showing inappropriate pictures",
+        "Online: Sending inappropriate messages",
+        "Grooming: Building fake trust to harm"
+      ],
+      warningSigns: "Warning Signs - Tell a Trusted Adult If You Notice These",
+      howYouFeel: "How You Might Feel",
+      feelingsList: [
+        "Sudden fears or anxiety",
+        "Not wanting to be touched",
+        "Feeling sad or angry often",
+        "Problems sleeping",
+        "Not wanting to go to school"
+      ],
+      physicalSigns: "Physical Signs",
+      physicalSignsList: [
+        "Pain in private areas",
+        "Frequent stomach aches",
+        "Eating too much or too little",
+        "Problems walking or sitting",
+        "Getting sick often"
+      ],
+      behaviorChanges: "Behavior Changes",
+      behaviorChangesList: [
+        "Becoming very quiet or aggressive",
+        "Not wanting to be around certain people",
+        "Having 'secrets' they can't tell",
+        "Acting much older or younger",
+        "Hurting themselves"
+      ],
+      bodySafetyRules: "Body Safety Rules - What Every Child Should Know",
+      yourBodyBelongs: "Your Body Belongs to YOU!",
+      bodyRights: [
+        "You have the right to say 'NO' to unwanted touch",
+        "Trust your feelings - if something feels wrong, it probably is",
+        "No one should touch your private parts",
+        "No one should ask you to touch their private parts",
+        "You should never keep 'body secrets'"
+      ],
+      ifUncomfortable: "If Someone Makes You Uncomfortable",
+      uncomfortableActions: [
+        "Say 'NO' loudly and clearly",
+        "Get away from that person",
+        "Tell a trusted adult immediately",
+        "Keep telling until someone believes you",
+        "Remember: It's NEVER your fault!"
+      ],
+      pocsAct: "POCSO Act - Your Legal Protection",
+      pocsaDescription: "The POCSO Act 2012 protects ALL children under 18 years from sexual abuse.",
+      whatItCovers: "What it Covers",
+      pocsoCoverage: [
+        "Sexual assault (3-5 years punishment)",
+        "Severe sexual assault (7 years to life)",
+        "Sexual harassment (3 years)",
+        "Child pornography (5-7 years)"
+      ],
+      yourRights: "Your Rights",
+      rightsList: [
+        "Police must help you",
+        "Your identity stays private",
+        "You can give statements at home",
+        "The court will believe you"
+      ],
+      emergencyHelplines: "Emergency Helplines - Save These Numbers!",
+      ourPromise: "Our Promise to You",
+      pledgeTitle: "WE PLEDGE TO KEEP CHILDREN SAFE BY:",
+      pledgeItems: [
+        "Teaching you about personal safety",
+        "Listening to you when you need help",
+        "Making sure your school and neighborhood are safe",
+        "Supporting any child who needs help"
+      ],
+      
+      // Contact numbers
+      childlineIndia: "Childline India",
+      childlineDesc: "24/7 helpline for children",
+      emergencyServices: "Emergency Services",
+      emergencyDesc: "Police, Fire, Medical Emergency",
+      cyberCrimeHelpline: "Cyber Crime Helpline",
+      cyberCrimeDesc: "Report online crimes and bullying",
+      womenHelpline: "Women Helpline",
+      womenHelplineDesc: "Support for harassment and abuse",
+      policeHelpline: "Police Helpline",
+      policeHelplineDesc: "Report crimes immediately",
+      reportOnlineCrimes: "Report Online Crimes:",
+      visitCyberCrime: "Visit",
+      pocsPortal: "POCSO Portal:",
+      visitPocso: "Visit",
+      toReportAbuse: "to report abuse",
+      
+      // Additional phrases
+      call: "Call",
+      remember: "Remember:",
+      important: "Important:",
+      rememberWarning: "If someone hurts you or makes you uncomfortable, it's NOT your fault! Tell a trusted adult like your parents, teacher, or school counselor. Keep telling until someone helps you."
     },
     hi: {
       saveChildhood: "बचपन बचाएं",
@@ -56,7 +217,167 @@ const MasoomPage = () => {
       csaPreventionContent: "शरीर की सुरक्षा के बारे में जानें, अनुचित व्यवहार को कैसे पहचानें, और अगर कोई आपको असहज महसूस कराए तो क्या करें। अपने अधिकारों को जानें और मदद कैसे प्राप्त करें।",
       didYouKnow: "क्या आपको पता है?",
       didYouKnowText: "कई बच्चे रिपोर्ट नहीं करते जब उनके साथ बुरी चीजें होती हैं। हम ऐसी सुरक्षित जगह बनाना चाहते हैं जहां बच्चे मदद मांगने में सहज महसूस करें। हर वयस्क को बच्चों की सुरक्षा में मदद करनी चाहिए।",
-      backToMain: "← मुख्य पृष्ठ पर वापस"
+      backToMain: "← मुख्य पृष्ठ पर वापस",
+      
+      // Cyberbullying section in Hindi
+      cyberbullyingTitle: "डिजिटल सुरक्षा और साइबर बुलिंग जागरूकता",
+      cyberbullyingSubtitle: "ऑनलाइन सुरक्षित रहें और डिजिटल खतरों से खुद को बचाएं",
+      whatIsCyberbullying: "साइबर बुलिंग क्या है?",
+      cyberbullyingDefinition: "साइबर बुलिंग तब होती है जब कोई व्यक्ति फोन, कंप्यूटर या सोशल मीडिया का उपयोग करके किसी दूसरे व्यक्ति को चोट पहुंचाने, शर्मिंदा करने या डराने के लिए करता है। याद रखें: बुलिंग आमतौर पर किसी ऐसे व्यक्ति द्वारा की जाती है जिसे आप जानते हैं!",
+      cyberbullyingTypes: [
+        "अपमानजनक संदेश या टिप्पणियां भेजना",
+        "बिना अनुमति के शर्मनाक फोटो या वीडियो साझा करना",
+        "ऑनलाइन अफवाहें या झूठ फैलाना",
+        "जानबूझकर किसी को ऑनलाइन समूह से बाहर करना"
+      ],
+      onlineThreats: "ऑनलाइन खतरे जिन्हें आपको जानना चाहिए",
+      cyberGrooming: "साइबर ग्रूमिंग",
+      cyberGroomingDesc: "जब अजनबी आपको नुकसान पहुंचाने के लिए नकली भरोसा बनाते हैं",
+      groomingWarnings: [
+        "लगातार चैटिंग और ध्यान देना",
+        "व्यक्तिगत जानकारी मांगना",
+        "बातचीत को गुप्त रखना चाहना",
+        "फोटो या वीडियो मांगना"
+      ],
+      phishingTricks: "फिशिंग ट्रिक्स",
+      phishingDesc: "आपकी जानकारी चुराने के लिए नकली संदेश",
+      phishingTypes: [
+        "फिशिंग: नकली ईमेल/वेबसाइट",
+        "स्मिशिंग: नकली टेक्स्ट संदेश",
+        "विशिंग: नकली फोन कॉल",
+        "कैटफिशिंग: नकली ऑनलाइन प्रोफाइल"
+      ],
+      safetyRules: "सरल सुरक्षा नियम",
+      doList: "✅ करें",
+      dontList: "❌ न करें",
+      doItems: [
+        "केवल वास्तविक जीवन के दोस्तों के साथ चैट करें",
+        "अगर कुछ गलत लगे तो किसी विश्वसनीय वयस्क को बताएं",
+        "पासवर्ड गुप्त रखें",
+        "बुरे लोगों को ब्लॉक करें और रिपोर्ट करें",
+        "कुछ भी पोस्ट करने से पहले सोचें"
+      ],
+      dontItems: [
+        "व्यक्तिगत जानकारी साझा न करें (पूरा नाम, पता, स्कूल)",
+        "इंटरनेट से अजनबियों से न मिलें",
+        "अज्ञात लोगों से ईमेल न खोलें",
+        "साइबर बुलियों का जवाब न दें (बस उन्हें ब्लॉक करें)",
+        "अज्ञात फाइलें या ऐप्स डाउनलोड न करें"
+      ],
+      rememberThis: "यह याद रखें!",
+      internetWarning: "🌐 इंटरनेट एक सार्वजनिक स्थान की तरह है - आप जो कुछ भी देखते हैं वह सब सच नहीं है!",
+      strangerWarning: "जैसे आप वास्तविक जीवन में अजनबियों से बात नहीं करते, वैसे ही ऑनलाइन अजनबियों पर भरोसा न करें।",
+      getHelp: "अभी मदद लें",
+      
+      // CSA section in Hindi
+      csaTitle: "बाल यौन शोषण (CSA) जागरूकता",
+      csaSubtitle: "समझना, रोकना और सुरक्षित रहना",
+      whatIsCSA: "बाल यौन शोषण (CSA) क्या है?",
+      csaDefinition: "CSA तब होता है जब कोई वयस्क या बड़ा व्यक्ति बच्चे के साथ यौन गतिविधियां करता है। यह गलत है और कानून के खिलाफ है। महत्वपूर्ण: यह आमतौर पर उन लोगों के साथ होता है जिन्हें आप जानते हैं, अजनबियों के साथ नहीं!",
+      keyFacts: "मुख्य तथ्य",
+      keyFactsList: [
+        "लड़के और लड़कियां दोनों पीड़ित हो सकते हैं",
+        "85% मामले उन लोगों के साथ होते हैं जिन्हें आप जानते हैं",
+        "सबसे संवेदनशील उम्र: 3-8 और 11-15 साल",
+        "कई बच्चे इसकी रिपोर्ट नहीं करते (53% इसे गुप्त रखते हैं)"
+      ],
+      typesOfAbuse: "शोषण के प्रकार",
+      abuseTypes: [
+        "संपर्क: अनुचित स्पर्श",
+        "गैर-संपर्क: अनुचित तस्वीरें दिखाना",
+        "ऑनलाइन: अनुचित संदेश भेजना",
+        "ग्रूमिंग: नुकसान पहुंचाने के लिए नकली भरोसा बनाना"
+      ],
+      warningSigns: "चेतावनी के संकेत - अगर आप इन्हें देखें तो किसी विश्वसनीय वयस्क को बताएं",
+      howYouFeel: "आप कैसा महसूस कर सकते हैं",
+      feelingsList: [
+        "अचानक डर या चिंता",
+        "छुआ जाना पसंद न करना",
+        "अक्सर उदास या गुस्साईल महसूस करना",
+        "सोने में समस्या",
+        "स्कूल जाना न चाहना"
+      ],
+      physicalSigns: "शारीरिक संकेत",
+      physicalSignsList: [
+        "निजी हिस्सों में दर्द",
+        "बार-बार पेट दर्द",
+        "बहुत ज्यादा या बहुत कम खाना",
+        "चलने या बैठने में समस्या",
+        "अक्सर बीमार पड़ना"
+      ],
+      behaviorChanges: "व्यवहार में बदलाव",
+      behaviorChangesList: [
+        "बहुत शांत या आक्रामक हो जाना",
+        "कुछ लोगों के आसपास नहीं रहना चाहना",
+        "ऐसे 'राज' होना जो न बता सकें",
+        "बहुत बड़े या छोटे की तरह व्यवहार करना",
+        "खुद को नुकसान पहुंचाना"
+      ],
+      bodySafetyRules: "शरीर सुरक्षा नियम - हर बच्चे को क्या जानना चाहिए",
+      yourBodyBelongs: "आपका शरीर आपका है!",
+      bodyRights: [
+        "आपको अनचाहे स्पर्श के लिए 'नहीं' कहने का अधिकार है",
+        "अपनी भावनाओं पर भरोसा करें - अगर कुछ गलत लगता है, तो शायद यह गलत है",
+        "किसी को भी आपके निजी हिस्सों को नहीं छूना चाहिए",
+        "किसी को भी आपसे उनके निजी हिस्सों को छूने के लिए नहीं कहना चाहिए",
+        "आपको कभी भी 'शरीर के राज' नहीं रखने चाहिए"
+      ],
+      ifUncomfortable: "अगर कोई आपको असहज महसूस कराता है",
+      uncomfortableActions: [
+        "जोर से और स्पष्ट रूप से 'नहीं' कहें",
+        "उस व्यक्ति से दूर हो जाएं",
+        "तुरंत किसी विश्वसनीय वयस्क को बताएं",
+        "तब तक बताते रहें जब तक कोई आप पर विश्वास न करे",
+        "याद रखें: यह कभी भी आपकी गलती नहीं है!"
+      ],
+      pocsAct: "POCSO अधिनियम - आपकी कानूनी सुरक्षा",
+      pocsaDescription: "POCSO अधिनियम 2012 यौन शोषण से 18 साल से कम उम्र के सभी बच्चों की सुरक्षा करता है।",
+      whatItCovers: "यह क्या कवर करता है",
+      pocsoCoverage: [
+        "यौन हमला (3-5 साल की सजा)",
+        "गंभीर यौन हमला (7 साल से आजीवन)",
+        "यौन उत्पीड़न (3 साल)",
+        "बाल पोर्नोग्राफी (5-7 साल)"
+      ],
+      yourRights: "आपके अधिकार",
+      rightsList: [
+        "पुलिस को आपकी मदद करनी चाहिए",
+        "आपकी पहचान गुप्त रहती है",
+        "आप घर पर बयान दे सकते हैं",
+        "अदालत आप पर विश्वास करेगी"
+      ],
+      emergencyHelplines: "आपातकालीन हेल्पलाइन - इन नंबरों को सेव करें!",
+      ourPromise: "आपसे हमारा वादा",
+      pledgeTitle: "हम बच्चों को सुरक्षित रखने का संकल्प लेते हैं:",
+      pledgeItems: [
+        "आपको व्यक्तिगत सुरक्षा के बारे में सिखाकर",
+        "जब आपको मदद की जरूरत हो तो आपकी बात सुनकर",
+        "यह सुनिश्चित करके कि आपका स्कूल और मोहल्ला सुरक्षित है",
+        "किसी भी बच्चे की मदद करके जिसे सहायता की जरूरत है"
+      ],
+      
+      // Contact numbers in Hindi
+      childlineIndia: "चाइल्डलाइन इंडिया",
+      childlineDesc: "बच्चों के लिए 24/7 हेल्पलाइन",
+      emergencyServices: "आपातकालीन सेवाएं",
+      emergencyDesc: "पुलिस, अग्निशमन, मेडिकल इमरजेंसी",
+      cyberCrimeHelpline: "साइबर क्राइम हेल्पलाइन",
+      cyberCrimeDesc: "ऑनलाइन अपराध और बुलिंग की रिपोर्ट करें",
+      womenHelpline: "महिला हेल्पलाइन",
+      womenHelplineDesc: "उत्पीड़न और दुर्व्यवहार के लिए सहायता",
+      policeHelpline: "पुलिस हेल्पलाइन",
+      policeHelplineDesc: "तुरंत अपराध की रिपोर्ट करें",
+      reportOnlineCrimes: "ऑनलाइन अपराध की रिपोर्ट करें:",
+      visitCyberCrime: "पर जाएं",
+      pocsPortal: "POCSO पोर्टल:",
+      visitPocso: "पर जाएं",
+      toReportAbuse: "दुर्व्यवहार की रिपोर्ट करने के लिए",
+      
+      // Additional phrases in Hindi
+      call: "कॉल करें",
+      remember: "याद रखें:",
+      important: "महत्वपूर्ण:",
+      rememberWarning: "अगर कोई आपको चोट पहुंचाता है या असहज महसूस कराता है, तो यह आपकी गलती नहीं है! अपने माता-पिता, शिक्षक या स्कूल काउंसलर जैसे किसी विश्वसनीय वयस्क को बताएं। तब तक बताते रहें जब तक कोई आपकी मदद न करे।"
     }
   };
 
@@ -66,67 +387,54 @@ const MasoomPage = () => {
     <div className="space-y-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          {language === 'en' ? 'Digital Safety & Cyberbullying Awareness' : 'डिजिटल सुरक्षा और साइबर बुलिंग जागरूकता'}
+          {currentLang.cyberbullyingTitle}
         </h2>
         <p className="text-lg text-gray-600">
-          {language === 'en' ? 'Stay safe online and protect yourself from digital threats' : 'ऑनलाइन सुरक्षित रहें और डिजिटल खतरों से खुद को बचाएं'}
+          {currentLang.cyberbullyingSubtitle}
         </p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-blue-900">What is Cyberbullying?</CardTitle>
+          <CardTitle className="text-xl text-blue-900">{currentLang.whatIsCyberbullying}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-blue-800 leading-relaxed mb-4">
-            Cyberbullying is when someone uses phones, computers, or social media to hurt, 
-            embarrass, or scare another person. Remember: <strong>Bullying is usually done by someone you know!</strong>
+            {currentLang.cyberbullyingDefinition}
           </p>
           <ul className="space-y-2 text-blue-800">
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">•</span>
-              Sending mean messages or comments
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">•</span>
-              Sharing embarrassing photos or videos without permission
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">•</span>
-              Spreading rumors or lies online
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-600 mr-2">•</span>
-              Excluding someone from online groups on purpose
-            </li>
+            {currentLang.cyberbullyingTypes.map((type, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-blue-600 mr-2">•</span>
+                {type}
+              </li>
+            ))}
           </ul>
         </CardContent>
       </Card>
 
       <Card className="border-orange-200 bg-orange-50">
         <CardHeader>
-          <CardTitle className="text-xl text-orange-900">Online Threats You Should Know</CardTitle>
+          <CardTitle className="text-xl text-orange-900">{currentLang.onlineThreats}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-white rounded border border-orange-200">
-              <h4 className="font-semibold text-orange-800 mb-2">Cyber Grooming</h4>
-              <p className="text-sm text-orange-700 mb-2">When strangers build fake trust to harm you</p>
+              <h4 className="font-semibold text-orange-800 mb-2">{currentLang.cyberGrooming}</h4>
+              <p className="text-sm text-orange-700 mb-2">{currentLang.cyberGroomingDesc}</p>
               <ul className="text-xs text-orange-600 space-y-1">
-                <li>• Constant chatting and attention</li>
-                <li>• Asking for personal information</li>
-                <li>• Wanting to keep conversations secret</li>
-                <li>• Asking for photos or videos</li>
+                {currentLang.groomingWarnings.map((warning, index) => (
+                  <li key={index}>• {warning}</li>
+                ))}
               </ul>
             </div>
             <div className="p-4 bg-white rounded border border-orange-200">
-              <h4 className="font-semibold text-orange-800 mb-2">Phishing Tricks</h4>
-              <p className="text-sm text-orange-700 mb-2">Fake messages to steal your information</p>
+              <h4 className="font-semibold text-orange-800 mb-2">{currentLang.phishingTricks}</h4>
+              <p className="text-sm text-orange-700 mb-2">{currentLang.phishingDesc}</p>
               <ul className="text-xs text-orange-600 space-y-1">
-                <li>• <strong>Phishing:</strong> Fake emails/websites</li>
-                <li>• <strong>Smishing:</strong> Fake text messages</li>
-                <li>• <strong>Vishing:</strong> Fake phone calls</li>
-                <li>• <strong>Catfishing:</strong> Fake online profiles</li>
+                {currentLang.phishingTypes.map((type, index) => (
+                  <li key={index}>• <strong>{type.split(':')[0]}:</strong> {type.split(':')[1]}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -135,58 +443,30 @@ const MasoomPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl text-gray-900">Simple Safety Rules</CardTitle>
+          <CardTitle className="text-xl text-gray-900">{currentLang.safetyRules}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold text-green-800 mb-3">✅ DO</h4>
+              <h4 className="font-semibold text-green-800 mb-3">{currentLang.doList}</h4>
               <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Only chat with real-life friends
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Tell a trusted adult if something feels wrong
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Keep passwords private
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Block and report mean people
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2">✓</span>
-                  Think before you post anything
-                </li>
+                {currentLang.doItems.map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-green-600 mr-2">✓</span>
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-red-800 mb-3">❌ DON'T</h4>
+              <h4 className="font-semibold text-red-800 mb-3">{currentLang.dontList}</h4>
               <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-red-600 mr-2">✗</span>
-                  Share personal information (full name, address, school)
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-600 mr-2">✗</span>
-                  Meet strangers from the internet
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-600 mr-2">✗</span>
-                  Open emails from unknown people
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-600 mr-2">✗</span>
-                  Respond to cyberbullies (just block them)
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-600 mr-2">✗</span>
-                  Download unknown files or apps
-                </li>
+                {currentLang.dontItems.map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-red-600 mr-2">✗</span>
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -195,15 +475,15 @@ const MasoomPage = () => {
 
       <Card className="border-purple-200 bg-purple-50">
         <CardHeader>
-          <CardTitle className="text-xl text-purple-900">Remember This!</CardTitle>
+          <CardTitle className="text-xl text-purple-900">{currentLang.rememberThis}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center p-4 bg-white rounded border border-purple-200">
             <p className="text-purple-800 font-medium mb-2">
-              🌐 The Internet is like a public place - not everything you see is real!
+              {currentLang.internetWarning}
             </p>
             <p className="text-purple-700">
-              Just like you wouldn't talk to strangers in real life, don't trust strangers online.
+              {currentLang.strangerWarning}
             </p>
           </div>
         </CardContent>
@@ -213,15 +493,15 @@ const MasoomPage = () => {
         <CardHeader>
           <CardTitle className="text-xl text-red-900 flex items-center gap-2">
             <Phone className="w-5 h-5" />
-            Get Help Now
+            {currentLang.getHelp}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { name: "Childline India", number: "1098", desc: "24/7 help for children in trouble" },
-              { name: "Emergency Services", number: "112", desc: "Police, Fire, Medical Emergency" },
-              { name: "Cyber Crime Helpline", number: "1930", desc: "Report online crimes and bullying" }
+              { name: currentLang.childlineIndia, number: "1098", desc: currentLang.childlineDesc },
+              { name: currentLang.emergencyServices, number: "112", desc: currentLang.emergencyDesc },
+              { name: currentLang.cyberCrimeHelpline, number: "1930", desc: currentLang.cyberCrimeDesc }
             ].map((contact, index) => (
               <div key={index} className="p-3 bg-white rounded border border-red-200">
                 <div className="font-medium text-red-800">{contact.name}</div>
@@ -231,14 +511,14 @@ const MasoomPage = () => {
                   onClick={() => handleCall(contact.number)}
                   className="w-full bg-red-600 hover:bg-red-700"
                 >
-                  Call {contact.number}
+                  {currentLang.call} {contact.number}
                 </Button>
               </div>
             ))}
           </div>
           <div className="mt-4 p-3 bg-white rounded border border-red-200">
             <p className="text-sm text-red-700">
-              <strong>Report Online Crimes:</strong> Visit <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" className="underline">cybercrime.gov.in</a>
+              <strong>{currentLang.reportOnlineCrimes}</strong> {currentLang.visitCyberCrime} <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" className="underline">cybercrime.gov.in</a>
             </p>
           </div>
         </CardContent>
@@ -250,39 +530,36 @@ const MasoomPage = () => {
     <div className="space-y-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          {language === 'en' ? 'Child Sexual Abuse (CSA) Awareness' : 'बाल यौन शोषण (CSA) जागरूकता'}
+          {currentLang.csaTitle}
         </h2>
         <p className="text-lg text-gray-600">
-          {language === 'en' ? 'Understanding, preventing, and staying safe' : 'समझना, रोकना और सुरक्षित रहना'}
+          {currentLang.csaSubtitle}
         </p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-blue-900">What is Child Sexual Abuse (CSA)?</CardTitle>
+          <CardTitle className="text-xl text-blue-900">{currentLang.whatIsCSA}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-blue-800 leading-relaxed mb-4">
-            CSA is when an adult or older person does sexual things with a child. This is wrong and against the law.
-            <strong> Important: It usually happens with people you know, not strangers!</strong>
+            {currentLang.csaDefinition}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-white rounded border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">Key Facts</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">{currentLang.keyFacts}</h4>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Both girls AND boys can be victims</li>
-                <li>• 85% happens with people you know</li>
-                <li>• Most vulnerable ages: 3-8 and 11-15 years</li>
-                <li>• Many children don't report it (53% keep it secret)</li>
+                {currentLang.keyFactsList.map((fact, index) => (
+                  <li key={index}>• {fact}</li>
+                ))}
               </ul>
             </div>
             <div className="p-4 bg-white rounded border border-blue-200">
-              <h4 className="font-semibold text-blue-800 mb-2">Types of Abuse</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">{currentLang.typesOfAbuse}</h4>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>• <strong>Contact:</strong> Inappropriate touching</li>
-                <li>• <strong>Non-contact:</strong> Showing inappropriate pictures</li>
-                <li>• <strong>Online:</strong> Sending inappropriate messages</li>
-                <li>• <strong>Grooming:</strong> Building fake trust to harm</li>
+                {currentLang.abuseTypes.map((type, index) => (
+                  <li key={index}>• <strong>{type.split(':')[0]}:</strong> {type.split(':')[1]}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -291,38 +568,32 @@ const MasoomPage = () => {
 
       <Card className="border-orange-200 bg-orange-50">
         <CardHeader>
-          <CardTitle className="text-xl text-orange-900">Warning Signs - Tell a Trusted Adult If You Notice These</CardTitle>
+          <CardTitle className="text-xl text-orange-900">{currentLang.warningSigns}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">How You Might Feel</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">{currentLang.howYouFeel}</h4>
               <ul className="text-sm text-orange-700 space-y-1">
-                <li>• Sudden fears or anxiety</li>
-                <li>• Not wanting to be touched</li>
-                <li>• Feeling sad or angry often</li>
-                <li>• Problems sleeping</li>
-                <li>• Not wanting to go to school</li>
+                {currentLang.feelingsList.map((feeling, index) => (
+                  <li key={index}>• {feeling}</li>
+                ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">Physical Signs</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">{currentLang.physicalSigns}</h4>
               <ul className="text-sm text-orange-700 space-y-1">
-                <li>• Pain in private areas</li>
-                <li>• Frequent stomach aches</li>
-                <li>• Eating too much or too little</li>
-                <li>• Problems walking or sitting</li>
-                <li>• Getting sick often</li>
+                {currentLang.physicalSignsList.map((sign, index) => (
+                  <li key={index}>• {sign}</li>
+                ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-orange-800 mb-2">Behavior Changes</h4>
+              <h4 className="font-semibold text-orange-800 mb-2">{currentLang.behaviorChanges}</h4>
               <ul className="text-sm text-orange-700 space-y-1">
-                <li>• Becoming very quiet or aggressive</li>
-                <li>• Not wanting to be around certain people</li>
-                <li>• Having "secrets" they can't tell</li>
-                <li>• Acting much older or younger</li>
-                <li>• Hurting themselves</li>
+                {currentLang.behaviorChangesList.map((change, index) => (
+                  <li key={index}>• {change}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -331,28 +602,24 @@ const MasoomPage = () => {
 
       <Card className="border-green-200 bg-green-50">
         <CardHeader>
-          <CardTitle className="text-xl text-green-900">Body Safety Rules - What Every Child Should Know</CardTitle>
+          <CardTitle className="text-xl text-green-900">{currentLang.bodySafetyRules}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 bg-white rounded border border-green-200">
-              <h4 className="font-semibold text-green-800 mb-3">Your Body Belongs to YOU!</h4>
+              <h4 className="font-semibold text-green-800 mb-3">{currentLang.yourBodyBelongs}</h4>
               <ul className="text-green-700 space-y-2">
-                <li>• You have the right to say "NO" to unwanted touch</li>
-                <li>• Trust your feelings - if something feels wrong, it probably is</li>
-                <li>• No one should touch your private parts</li>
-                <li>• No one should ask you to touch their private parts</li>
-                <li>• You should never keep "body secrets"</li>
+                {currentLang.bodyRights.map((right, index) => (
+                  <li key={index}>• {right}</li>
+                ))}
               </ul>
             </div>
             <div className="p-4 bg-white rounded border border-green-200">
-              <h4 className="font-semibold text-green-800 mb-3">If Someone Makes You Uncomfortable</h4>
+              <h4 className="font-semibold text-green-800 mb-3">{currentLang.ifUncomfortable}</h4>
               <ul className="text-green-700 space-y-2">
-                <li>• Say "NO" loudly and clearly</li>
-                <li>• Get away from that person</li>
-                <li>• Tell a trusted adult immediately</li>
-                <li>• Keep telling until someone believes you</li>
-                <li>• Remember: It's NEVER your fault!</li>
+                {currentLang.uncomfortableActions.map((action, index) => (
+                  <li key={index}>• {action}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -361,29 +628,27 @@ const MasoomPage = () => {
 
       <Card className="border-purple-200 bg-purple-50">
         <CardHeader>
-          <CardTitle className="text-xl text-purple-900">POCSO Act - Your Legal Protection</CardTitle>
+          <CardTitle className="text-xl text-purple-900">{currentLang.pocsAct}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-purple-800 mb-4">
-            The POCSO Act 2012 protects ALL children under 18 years from sexual abuse.
+            {currentLang.pocsaDescription}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-3 bg-white rounded border border-purple-200">
-              <h4 className="font-semibold text-purple-800 mb-2">What it Covers</h4>
+              <h4 className="font-semibold text-purple-800 mb-2">{currentLang.whatItCovers}</h4>
               <ul className="text-sm text-purple-700 space-y-1">
-                <li>• Sexual assault (3-5 years punishment)</li>
-                <li>• Severe sexual assault (7 years to life)</li>
-                <li>• Sexual harassment (3 years)</li>
-                <li>• Child pornography (5-7 years)</li>
+                {currentLang.pocsoCoverage.map((coverage, index) => (
+                  <li key={index}>• {coverage}</li>
+                ))}
               </ul>
             </div>
             <div className="p-3 bg-white rounded border border-purple-200">
-              <h4 className="font-semibold text-purple-800 mb-2">Your Rights</h4>
+              <h4 className="font-semibold text-purple-800 mb-2">{currentLang.yourRights}</h4>
               <ul className="text-sm text-purple-700 space-y-1">
-                <li>• Police must help you</li>
-                <li>• Your identity stays private</li>
-                <li>• You can give statements at home</li>
-                <li>• The court will believe you</li>
+                {currentLang.rightsList.map((right, index) => (
+                  <li key={index}>• {right}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -393,8 +658,7 @@ const MasoomPage = () => {
       <Alert className="border-yellow-200 bg-yellow-50">
         <AlertTriangle className="h-4 w-4 text-yellow-600" />
         <AlertDescription className="text-yellow-800">
-          <strong>Remember:</strong> If someone hurts you or makes you uncomfortable, it's NOT your fault! 
-          Tell a trusted adult like your parents, teacher, or school counselor. Keep telling until someone helps you.
+          <strong>{currentLang.remember}</strong> {currentLang.rememberWarning}
         </AlertDescription>
       </Alert>
 
@@ -402,16 +666,16 @@ const MasoomPage = () => {
         <CardHeader>
           <CardTitle className="text-xl text-red-900 flex items-center gap-2">
             <Phone className="w-5 h-5" />
-            Emergency Helplines - Save These Numbers!
+            {currentLang.emergencyHelplines}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { name: "Childline India", number: "1098", desc: "24/7 helpline for children" },
-              { name: "Emergency Services", number: "112", desc: "Police, Fire, Medical Emergency" },
-              { name: "Women Helpline", number: "181", desc: "Support for harassment and abuse" },
-              { name: "Police Helpline", number: "100", desc: "Report crimes immediately" }
+              { name: currentLang.childlineIndia, number: "1098", desc: currentLang.childlineDesc },
+              { name: currentLang.emergencyServices, number: "112", desc: currentLang.emergencyDesc },
+              { name: currentLang.womenHelpline, number: "181", desc: currentLang.womenHelplineDesc },
+              { name: currentLang.policeHelpline, number: "100", desc: currentLang.policeHelplineDesc }
             ].map((contact, index) => (
               <div key={index} className="p-3 bg-white rounded border border-red-200">
                 <div className="font-medium text-red-800">{contact.name}</div>
@@ -421,14 +685,14 @@ const MasoomPage = () => {
                   onClick={() => handleCall(contact.number)}
                   className="w-full bg-red-600 hover:bg-red-700"
                 >
-                  Call {contact.number}
+                  {currentLang.call} {contact.number}
                 </Button>
               </div>
             ))}
           </div>
           <div className="mt-4 p-3 bg-white rounded border border-red-200">
             <p className="text-sm text-red-700">
-              <strong>POCSO Portal:</strong> Visit <a href="https://pocso.ncpcrweb.in" target="_blank" rel="noopener noreferrer" className="underline">pocso.ncpcrweb.in</a> to report abuse
+              <strong>{currentLang.pocsPortal}</strong> {currentLang.visitPocso} <a href="https://pocso.ncpcrweb.in" target="_blank" rel="noopener noreferrer" className="underline">pocso.ncpcrweb.in</a> {currentLang.toReportAbuse}
             </p>
           </div>
         </CardContent>
@@ -436,16 +700,15 @@ const MasoomPage = () => {
 
       <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-blue-900">Our Promise to You</CardTitle>
+          <CardTitle className="text-xl text-blue-900">{currentLang.ourPromise}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center p-6 bg-white rounded border border-blue-200">
-            <h3 className="font-bold text-blue-800 mb-4">WE PLEDGE TO KEEP CHILDREN SAFE BY:</h3>
+            <h3 className="font-bold text-blue-800 mb-4">{currentLang.pledgeTitle}</h3>
             <div className="text-blue-700 space-y-2">
-              <p>• Teaching you about personal safety</p>
-              <p>• Listening to you when you need help</p>
-              <p>• Making sure your school and neighborhood are safe</p>
-              <p>• Supporting any child who needs help</p>
+              {currentLang.pledgeItems.map((item, index) => (
+                <p key={index}>• {item}</p>
+              ))}
             </div>
           </div>
         </CardContent>
