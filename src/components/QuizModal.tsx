@@ -26,31 +26,35 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: { selected: string; correct: boolean } }>({});
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
 
   if (!isOpen) return null;
 
   const question = questions[currentQuestion];
   
   const handleAnswerSelect = (answer: string) => {
-    setSelectedAnswer(answer);
+    if (!showFeedback) {
+      setSelectedAnswer(answer);
+    }
+  };
+
+  const handleSubmitAnswer = () => {
+    const correct = selectedAnswer === question.correctAnswer;
+    setIsCorrect(correct);
+    setShowFeedback(true);
+    
+    if (correct) {
+      setScore(score + 1);
+    }
   };
 
   const handleNext = () => {
-    const isCorrect = selectedAnswer === question.correctAnswer;
-    const newAnswers = {
-      ...answers,
-      [currentQuestion]: { selected: selectedAnswer, correct: isCorrect }
-    };
-    setAnswers(newAnswers);
-
-    if (isCorrect) {
-      setScore(score + 1);
-    }
-
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer('');
+      setShowFeedback(false);
+      setIsCorrect(false);
     } else {
       setShowResult(true);
     }
@@ -61,10 +65,9 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
     setSelectedAnswer('');
     setShowResult(false);
     setScore(0);
-    setAnswers({});
+    setShowFeedback(false);
+    setIsCorrect(false);
   };
-
-  const isAnswered = answers[currentQuestion];
 
   if (showResult) {
     return (
@@ -143,7 +146,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
                         selectedAnswer === option
                           ? 'bg-blue-50 border-blue-500'
                           : 'hover:bg-gray-50'
-                      }`}
+                      } ${showFeedback ? 'pointer-events-none' : ''}`}
                       onClick={() => handleAnswerSelect(option)}
                     >
                       <div className="flex items-center">
@@ -168,7 +171,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
                         selectedAnswer === option
                           ? 'bg-blue-50 border-blue-500'
                           : 'hover:bg-gray-50'
-                      }`}
+                      } ${showFeedback ? 'pointer-events-none' : ''}`}
                       onClick={() => handleAnswerSelect(option)}
                     >
                       <div className="flex items-center">
@@ -184,23 +187,23 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
                 </div>
               )}
 
-              {isAnswered && (
+              {showFeedback && (
                 <div className={`mt-4 p-4 rounded-lg ${
-                  isAnswered.correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                  isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
                 }`}>
                   <div className="flex items-start gap-2">
-                    {isAnswered.correct ? (
+                    {isCorrect ? (
                       <Check className="w-5 h-5 text-green-600 mt-0.5" />
                     ) : (
                       <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
                     )}
                     <div>
                       <p className={`font-medium ${
-                        isAnswered.correct ? 'text-green-800' : 'text-red-800'
+                        isCorrect ? 'text-green-800' : 'text-red-800'
                       }`}>
-                        {isAnswered.correct ? 'Correct!' : 'Incorrect'}
+                        {isCorrect ? 'Correct!' : 'Incorrect'}
                       </p>
-                      {!isAnswered.correct && (
+                      {!isCorrect && (
                         <p className="text-red-700 text-sm mt-1">
                           Correct answer: {question.correctAnswer}
                         </p>
@@ -214,9 +217,9 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, title, questions
               )}
 
               <div className="mt-6 flex gap-3">
-                {!isAnswered ? (
+                {!showFeedback ? (
                   <Button 
-                    onClick={handleNext} 
+                    onClick={handleSubmitAnswer} 
                     disabled={!selectedAnswer}
                     className="flex-1"
                   >
