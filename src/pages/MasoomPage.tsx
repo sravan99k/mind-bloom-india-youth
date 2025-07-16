@@ -5,11 +5,13 @@ import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, Globe
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import CyberbullyingSlideshow from "@/components/CyberbullyingSlideshow";
+import CSASlideshow from "@/components/CSASlideshow";
 
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [showCyberbullyingSlideshow, setShowCyberbullyingSlideshow] = useState(false);
+  const [showCSASlideshow, setShowCSASlideshow] = useState(false);
 
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
@@ -25,6 +27,14 @@ const MasoomPage = () => {
 
   const closeCyberbullyingSlideshow = () => {
     setShowCyberbullyingSlideshow(false);
+  };
+
+  const openCSASlideshow = () => {
+    setShowCSASlideshow(true);
+  };
+
+  const closeCSASlideshow = () => {
+    setShowCSASlideshow(false);
   };
 
   const t = {
@@ -846,7 +856,7 @@ const MasoomPage = () => {
 
               <Card 
                 className="border-red-200 bg-red-50 hover:bg-red-100 cursor-pointer transition-colors"
-                onClick={() => setActiveSection('csa')}
+                onClick={openCSASlideshow}
               >
                 <CardHeader>
                   <CardTitle className="text-xl text-red-900 flex items-center gap-3">
@@ -908,6 +918,14 @@ const MasoomPage = () => {
         {showCyberbullyingSlideshow && (
           <CyberbullyingSlideshow
             onClose={closeCyberbullyingSlideshow}
+            language={language}
+          />
+        )}
+
+        {/* CSA Slideshow Modal */}
+        {showCSASlideshow && (
+          <CSASlideshow
+            onClose={closeCSASlideshow}
             language={language}
           />
         )}
