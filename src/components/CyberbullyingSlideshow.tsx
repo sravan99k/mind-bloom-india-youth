@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
-interface CyberbullyingSlideshowProps {
+interface CyberbullingSlideshowProps {
   onClose: () => void;
   language: 'en' | 'hi';
 }
 
-const CyberbullyingSlideshow: React.FC<CyberbullyingSlideshowProps> = ({ onClose, language }) => {
+const CyberbullyingSlideshow: React.FC<CyberbullySlideshowProps> = ({ onClose, language }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -132,16 +132,42 @@ const CyberbullyingSlideshow: React.FC<CyberbullyingSlideshowProps> = ({ onClose
         {/* Slide Content */}
         <div className="relative h-[70vh] overflow-hidden">
           <div className="h-full flex items-center justify-center p-8">
-            <div className="w-full max-w-5xl">
-              <img
-                src={currentSlideData.image}
-                alt={title}
-                className="w-full h-auto max-h-[60vh] object-contain mx-auto rounded-lg shadow-lg"
-                onError={(e) => {
-                  console.error('Image failed to load:', currentSlideData.image);
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
+            <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Text Content */}
+              <div className="space-y-4">
+                <h3 className="text-2xl lg:text-3xl font-bold text-blue-900 mb-6">
+                  {title}
+                </h3>
+                <div className="space-y-3">
+                  {content.map((text, index) => (
+                    <p 
+                      key={index} 
+                      className={`text-gray-700 leading-relaxed ${
+                        text.startsWith('•') ? 'ml-4' : ''
+                      } ${
+                        text.includes('It is what YOU use it for') || text.includes('What else??') 
+                          ? 'text-lg font-semibold text-blue-800' 
+                          : ''
+                      }`}
+                    >
+                      {text}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Image */}
+              <div className="flex justify-center">
+                <img
+                  src={currentSlideData.image}
+                  alt={title}
+                  className="w-full h-auto max-h-[50vh] object-contain rounded-lg shadow-lg"
+                  onError={(e) => {
+                    console.error('Image failed to load:', currentSlideData.image);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
             </div>
           </div>
 
