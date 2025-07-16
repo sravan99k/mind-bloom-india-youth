@@ -1,14 +1,15 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import CyberbullyingSlideshow from "@/components/CyberbullyingSlideshow";
 
 const MasoomPage = () => {
   const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
+  const [showCyberbullyingSlideshow, setShowCyberbullyingSlideshow] = useState(false);
 
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
@@ -16,6 +17,14 @@ const MasoomPage = () => {
 
   const toggleLanguage = () => {
     setLanguage(prev => prev === 'en' ? 'hi' : 'en');
+  };
+
+  const openCyberbullyingSlideshow = () => {
+    setShowCyberbullyingSlideshow(true);
+  };
+
+  const closeCyberbullyingSlideshow = () => {
+    setShowCyberbullyingSlideshow(false);
   };
 
   const t = {
@@ -814,7 +823,7 @@ const MasoomPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card 
                 className="border-blue-200 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
-                onClick={() => setActiveSection('cyberbullying')}
+                onClick={openCyberbullyingSlideshow}
               >
                 <CardHeader>
                   <CardTitle className="text-xl text-blue-900 flex items-center gap-3">
@@ -893,6 +902,14 @@ const MasoomPage = () => {
             </Button>
             <CSAContent />
           </div>
+        )}
+
+        {/* Cyberbullying Slideshow Modal */}
+        {showCyberbullyingSlideshow && (
+          <CyberbullyingSlideshow
+            onClose={closeCyberbullyingSlideshow}
+            language={language}
+          />
         )}
       </div>
       <Footer />
