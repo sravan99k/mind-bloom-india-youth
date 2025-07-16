@@ -39,14 +39,15 @@ export const useAuth = () => {
         let demoData = null;
         
         try {
+          // Fetch from user_demographics table
           const { data, error: demoError } = await supabase
-            .from('demographics')
+            .from('user_demographics')
             .select('*')
             .eq('user_id', session.user.id)
             .single();
             
           if (demoError && demoError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-            console.error('Error fetching demographics:', demoError);
+            console.error('Error fetching user demographics:', demoError);
             if (initialLoad) {
               toast({
                 title: 'Profile Incomplete',
@@ -58,7 +59,7 @@ export const useAuth = () => {
           
           demoData = data;
         } catch (demError) {
-          console.error('Error in demographics fetch:', demError);
+          console.error('Error in user demographics fetch:', demError);
           // Don't set error state for missing demographics to prevent UI issues
         }
         
@@ -122,18 +123,18 @@ export const useAuth = () => {
       // If user doesn't have a role in metadata, set a default one
       if (!user.user_metadata?.role) {
         try {
-          const { data: profile } = await supabase
-            .from('profiles')
+          const { data: demographics } = await supabase
+            .from('user_demographics')
             .select('role')
-            .eq('id', user.id)
+            .eq('user_id', user.id)
             .single();
             
-          if (profile?.role) {
+          if (demographics?.role) {
             // Update auth user metadata with role
             await supabase.auth.updateUser({
-              data: { role: profile.role }
+              data: { role: demographics.role }
             });
-            return profile.role;
+            return demographics.role;
           }
         } catch (error) {
           console.error('Error ensuring user role:', error);
@@ -174,19 +175,20 @@ export const useAuth = () => {
         let demoData = null;
         
         try {
+          // Fetch from user_demographics table
           const { data, error: demoError } = await supabase
-            .from('demographics')
+            .from('user_demographics')
             .select('*')
             .eq('user_id', newSession.user.id)
             .single();
             
           if (demoError && demoError.code !== 'PGRST116') {
-            console.error('Error in auth change demographic fetch:', demoError);
+            console.error('Error in auth change user demographic fetch:', demoError);
           } else {
             demoData = data;
           }
         } catch (demError) {
-          console.error('Error in auth change demographics:', demError);
+          console.error('Error in auth change user demographics:', demError);
         }
         
         // Only update user if the data has actually changed

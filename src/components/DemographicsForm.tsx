@@ -21,7 +21,7 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
     gender: "",
     rollno: "",
     schoolName: "",
-    branch: ""
+    school_branch: ""
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -43,13 +43,20 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
       }
 
       const { error } = await supabase
-        .from('demographics')
+        .from('user_demographics')
         .insert({
           user_id: user.id,
-          age: parseInt(formData.class) || null,
+          full_name: user.user_metadata?.full_name || '',
+          email: user.email || '',
+          role: user.user_metadata?.role || 'student',
+          state: formData.state,
+          city: formData.city,
+          pincode: formData.pincode,
+          class: formData.class,
           gender: formData.gender,
-          grade: formData.class,
-          school: formData.schoolName,
+          rollno: formData.rollno,
+          school_name: formData.schoolName,
+          school_branch: formData.school_branch,
         });
 
       if (error) {
@@ -185,8 +192,8 @@ const DemographicsForm = ({ onComplete }: DemographicsFormProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="branch">Branch/Stream</Label>
-                <Select onValueChange={(value) => handleInputChange("branch", value)} disabled={loading}>
+                <Label htmlFor="school_branch">Branch/Stream</Label>
+                <Select onValueChange={(value) => handleInputChange("school_branch", value)} disabled={loading}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select branch" />
                   </SelectTrigger>

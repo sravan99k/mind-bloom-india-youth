@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,11 +38,64 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
     parentPhone: ""
   });
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
+
+  // Validation function for signup form
+  const validateSignupForm = () => {
+    const errors: Record<string, string> = {};
+
+    // Basic validation
+    if (!signupData.name.trim()) {
+      errors.name = "Full name is required";
+    }
+    if (!signupData.email.trim()) {
+      errors.email = "Email is required";
+    }
+    if (!signupData.password) {
+      errors.password = "Password is required";
+    } else if (signupData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters long";
+    }
+    if (signupData.password !== signupData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+    if (!signupData.role) {
+      errors.role = "Please select your role";
+    }
+
+    // Required personal information
+    if (!signupData.state.trim()) {
+      errors.state = "State is required";
+    }
+    if (!signupData.city.trim()) {
+      errors.city = "City is required";
+    }
+
+    // Role-specific validation
+    if (signupData.role === 'student') {
+      // Students need DOB
+      if (!signupData.dobDay || !signupData.dobMonth || !signupData.dobYear) {
+        errors.dateOfBirth = "Date of birth is required for students";
+      }
+      
+      // Students need class and gender
+      if (!signupData.class) {
+        errors.class = "Class is required for students";
+      }
+      if (!signupData.gender) {
+        errors.gender = "Gender is required for students";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setValidationErrors({});
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -54,7 +108,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
           title: "Login Error",
           description: error.message,
           variant: "destructive",
-          duration: 2000,
+          duration: 3000,
         });
         return;
       }
@@ -72,7 +126,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
         title: "Login Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-        duration: 2000,
+        duration: 3000,
       });
     } finally {
       setLoading(false);
@@ -81,45 +135,29 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (signupData.password !== signupData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please check and try again.",
-        variant: "destructive",
-        duration: 2000,
-      });
-      return;
-    }
-
-    if (signupData.password.length < 6) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-        duration: 2000,
-      });
-      return;
-    }
-
-    if (!signupData.role) {
-      toast({
-        title: "Role Required",
-        description: "Please select your role (Student or Management).",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
+    setValidationErrors({});
+
+    // Validate form
+    if (!validateSignupForm()) {
+      setLoading(false);
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields correctly.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
 
     try {
+      // First, create the user account
       const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
         options: {
           data: {
-            name: signupData.name,
+            full_name: signupData.name,
             role: signupData.role,
           }
         }
@@ -130,51 +168,66 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
           title: "Signup Error",
           description: error.message,
           variant: "destructive",
-          duration: 2000,
+          duration: 3000,
         });
         return;
       }
 
       if (data.user) {
-        // Save demographics with all the new fields
-        let dob = null;
-        if (signupData.dobYear && signupData.dobMonth && signupData.dobDay) {
-          dob = `${signupData.dobYear}-${signupData.dobMonth.padStart(2, '0')}-${signupData.dobDay.padStart(2, '0')}`;
+        // Prepare date of birth (only for students)
+        let dateOfBirth = null;
+        if (signupData.role === 'student' && signupData.dobYear && signupData.dobMonth && signupData.dobDay) {
+          dateOfBirth = `${signupData.dobYear}-${signupData.dobMonth.padStart(2, '0')}-${signupData.dobDay.padStart(2, '0')}`;
         }
+
+        // Save to user_demographics table with proper error handling
+        const demographicsData = {
+          user_id: data.user.id,
+          full_name: signupData.name,
+          email: signupData.email,
+          role: signupData.role,
+          state: signupData.state,
+          city: signupData.city,
+          pincode: signupData.pincode || null, // Now nullable
+          class: signupData.role === 'student' ? signupData.class : null,
+          gender: signupData.role === 'student' ? signupData.gender : null,
+          rollno: signupData.role === 'student' ? signupData.rollno : null,
+          school_name: signupData.schoolName || null, // Now nullable
+          school_branch: signupData.branch || null,
+          date_of_birth: dateOfBirth,
+          parent_name: signupData.role === 'student' ? signupData.parentName : null,
+          parent_phone: signupData.role === 'student' ? signupData.parentPhone : null,
+        };
+
         const { error: demoError } = await supabase
-          .from('demographics')
-          .insert({
-            user_id: data.user.id,
-            age: parseInt(signupData.class) || null,
-            gender: signupData.gender,
-            grade: signupData.class,
-            school: signupData.schoolName,
-            state: signupData.state,
-            city: signupData.city,
-            pincode: signupData.pincode,
-            roll_no: signupData.rollno,
-            branch: signupData.branch,
-            parent_name: signupData.parentName,
-            parent_phone: signupData.parentPhone,
-            dob,
-          });
+          .from('user_demographics')
+          .insert(demographicsData);
 
         if (demoError) {
-          console.error('Error saving demographics:', demoError);
+          console.error('Error saving user demographics:', demoError);
+          toast({
+            title: "Profile Setup Error",
+            description: `Account created but there was an issue saving your profile: ${demoError.message}. You can update it later.`,
+            variant: "default",
+            duration: 4000,
+          });
+        } else {
+          toast({
+            title: "Account Created!",
+            description: "Your account has been created successfully. You can now access the platform.",
+            duration: 2000,
+          });
         }
-
-        toast({
-          title: "Account Created!",
-          description: "Your account has been created successfully. You can now access the platform.",
-        });
+        
         onAuthComplete();
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         title: "Signup Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: `An unexpected error occurred: ${error.message || 'Please try again.'}`,
         variant: "destructive",
-        duration: 2000,
+        duration: 4000,
       });
     } finally {
       setLoading(false);
@@ -241,7 +294,7 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
+                    <Label htmlFor="signup-name">Full Name *</Label>
                     <ProfanityFilteredInput
                       id="name"
                       placeholder="John Doe"
@@ -250,13 +303,19 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         setSignupData({ ...signupData, name: e.target.value })
                       }
                       disabled={loading}
-                      required
+                      className={validationErrors.name ? "border-red-500" : ""}
                     />
+                    {validationErrors.name && (
+                      <p className="text-xs text-red-500">{validationErrors.name}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-role">Role</Label>
-                    <Select onValueChange={(value) => setSignupData({...signupData, role: value})} disabled={loading}>
-                      <SelectTrigger>
+                    <Label htmlFor="signup-role">Role *</Label>
+                    <Select 
+                      onValueChange={(value) => setSignupData({...signupData, role: value})} 
+                      disabled={loading}
+                    >
+                      <SelectTrigger className={validationErrors.role ? "border-red-500" : ""}>
                         <SelectValue placeholder="Select your role" />
                       </SelectTrigger>
                       <SelectContent>
@@ -264,12 +323,15 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         <SelectItem value="management">School Management</SelectItem>
                       </SelectContent>
                     </Select>
+                    {validationErrors.role && (
+                      <p className="text-xs text-red-500">{validationErrors.role}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Email *</Label>
                     <ProfanityFilteredInput
                       id="signup-email"
                       type="email"
@@ -279,11 +341,14 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         setSignupData({ ...signupData, email: e.target.value })
                       }
                       disabled={loading}
-                      required
+                      className={validationErrors.email ? "border-red-500" : ""}
                     />
+                    {validationErrors.email && (
+                      <p className="text-xs text-red-500">{validationErrors.email}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">Password *</Label>
                     <ProfanityFilteredInput
                       id="password"
                       type="password"
@@ -293,13 +358,16 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                         setSignupData({ ...signupData, password: e.target.value })
                       }
                       disabled={loading}
-                      required
+                      className={validationErrors.password ? "border-red-500" : ""}
                     />
+                    {validationErrors.password && (
+                      <p className="text-xs text-red-500">{validationErrors.password}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-confirm">Confirm Password</Label>
+                  <Label htmlFor="signup-confirm">Confirm Password *</Label>
                   <ProfanityFilteredInput
                     id="signup-confirm"
                     type="password"
@@ -309,24 +377,26 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                       setSignupData({ ...signupData, confirmPassword: e.target.value })
                     }
                     disabled={loading}
-                    required
+                    className={validationErrors.confirmPassword ? "border-red-500" : ""}
                   />
+                  {validationErrors.confirmPassword && (
+                    <p className="text-xs text-red-500">{validationErrors.confirmPassword}</p>
+                  )}
                 </div>
 
                 {/* Personal Information Section */}
                 <div className="border-t pt-4">
                   <h3 className="text-lg font-medium mb-4">Personal Information</h3>
 
-                  {/* Date of Birth Dropdowns - Only show for students */}
-                  {signupData.role !== 'management' && (
+                  {/* Date of Birth - Only for students */}
+                  {signupData.role === 'student' && (
                     <div className="mb-4">
-                      <Label>Date of Birth</Label>
+                      <Label>Date of Birth *</Label>
                       <div className="flex gap-2 mt-1">
                         <select
-                          className="border rounded px-2 py-1 text-sm"
+                          className={`border rounded px-2 py-1 text-sm ${validationErrors.dateOfBirth ? 'border-red-500' : ''}`}
                           value={signupData.dobDay}
                           onChange={e => setSignupData({ ...signupData, dobDay: e.target.value })}
-                          required={signupData.role === 'student'}
                           disabled={loading}
                         >
                           <option value="">Day</option>
@@ -335,35 +405,27 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                           ))}
                         </select>
                         <select
-                          className="border rounded px-2 py-1 text-sm"
+                          className={`border rounded px-2 py-1 text-sm ${validationErrors.dateOfBirth ? 'border-red-500' : ''}`}
                           value={signupData.dobMonth}
                           onChange={e => setSignupData({ ...signupData, dobMonth: e.target.value })}
-                          required={signupData.role === 'student'}
                           disabled={loading}
                         >
                           <option value="">Month</option>
                           {[
-                            { value: "01", label: "Jan" },
-                            { value: "02", label: "Feb" },
-                            { value: "03", label: "Mar" },
-                            { value: "04", label: "Apr" },
-                            { value: "05", label: "May" },
-                            { value: "06", label: "Jun" },
-                            { value: "07", label: "Jul" },
-                            { value: "08", label: "Aug" },
-                            { value: "09", label: "Sep" },
-                            { value: "10", label: "Oct" },
-                            { value: "11", label: "Nov" },
-                            { value: "12", label: "Dec" },
+                            { value: "01", label: "Jan" }, { value: "02", label: "Feb" },
+                            { value: "03", label: "Mar" }, { value: "04", label: "Apr" },
+                            { value: "05", label: "May" }, { value: "06", label: "Jun" },
+                            { value: "07", label: "Jul" }, { value: "08", label: "Aug" },
+                            { value: "09", label: "Sep" }, { value: "10", label: "Oct" },
+                            { value: "11", label: "Nov" }, { value: "12", label: "Dec" },
                           ].map(m => (
                             <option key={m.value} value={m.value}>{m.label}</option>
                           ))}
                         </select>
                         <select
-                          className="border rounded px-2 py-1 text-sm"
+                          className={`border rounded px-2 py-1 text-sm ${validationErrors.dateOfBirth ? 'border-red-500' : ''}`}
                           value={signupData.dobYear}
                           onChange={e => setSignupData({ ...signupData, dobYear: e.target.value })}
-                          required={signupData.role === 'student'}
                           disabled={loading}
                         >
                           <option value="">Year</option>
@@ -372,15 +434,15 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                           ))}
                         </select>
                       </div>
-                      {signupData.role === 'student' && (!signupData.dobDay || !signupData.dobMonth || !signupData.dobYear) && (
-                        <div className="text-xs text-red-500 mt-1">Date of birth is required for students</div>
+                      {validationErrors.dateOfBirth && (
+                        <p className="text-xs text-red-500 mt-1">{validationErrors.dateOfBirth}</p>
                       )}
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="state">State</Label>
+                      <Label htmlFor="state">State *</Label>
                       <ProfanityFilteredInput
                         id="state"
                         placeholder="State"
@@ -389,11 +451,14 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                           setSignupData({ ...signupData, state: e.target.value })
                         }
                         disabled={loading}
-                        required
+                        className={validationErrors.state ? "border-red-500" : ""}
                       />
+                      {validationErrors.state && (
+                        <p className="text-xs text-red-500">{validationErrors.state}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
+                      <Label htmlFor="city">City *</Label>
                       <ProfanityFilteredInput
                         id="city"
                         placeholder="City"
@@ -402,8 +467,11 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                           setSignupData({ ...signupData, city: e.target.value })
                         }
                         disabled={loading}
-                        required
+                        className={validationErrors.city ? "border-red-500" : ""}
                       />
+                      {validationErrors.city && (
+                        <p className="text-xs text-red-500">{validationErrors.city}</p>
+                      )}
                     </div>
                   </div>
 
@@ -423,9 +491,12 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                     </div>
                     {signupData.role === 'student' && (
                       <div className="space-y-2">
-                        <Label htmlFor="class">Class</Label>
-                        <Select onValueChange={(value) => setSignupData({...signupData, class: value})} disabled={loading}>
-                          <SelectTrigger>
+                        <Label htmlFor="class">Class *</Label>
+                        <Select 
+                          onValueChange={(value) => setSignupData({...signupData, class: value})} 
+                          disabled={loading}
+                        >
+                          <SelectTrigger className={validationErrors.class ? "border-red-500" : ""}>
                             <SelectValue placeholder="Select your class" />
                           </SelectTrigger>
                           <SelectContent>
@@ -436,16 +507,22 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                             <SelectItem value="10">Class 10</SelectItem>
                           </SelectContent>
                         </Select>
+                        {validationErrors.class && (
+                          <p className="text-xs text-red-500">{validationErrors.class}</p>
+                        )}
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    {signupData.role !== 'management' && (
+                    {signupData.role === 'student' && (
                       <div className="space-y-2">
-                        <Label htmlFor="gender">Gender</Label>
-                        <Select onValueChange={(value) => setSignupData({...signupData, gender: value})} disabled={loading}>
-                          <SelectTrigger>
+                        <Label htmlFor="gender">Gender *</Label>
+                        <Select 
+                          onValueChange={(value) => setSignupData({...signupData, gender: value})} 
+                          disabled={loading}
+                        >
+                          <SelectTrigger className={validationErrors.gender ? "border-red-500" : ""}>
                             <SelectValue placeholder="Select gender" />
                           </SelectTrigger>
                           <SelectContent>
@@ -455,6 +532,9 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                             <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                           </SelectContent>
                         </Select>
+                        {validationErrors.gender && (
+                          <p className="text-xs text-red-500">{validationErrors.gender}</p>
+                        )}
                       </div>
                     )}
                     {signupData.role === 'student' && (
@@ -529,6 +609,10 @@ const AuthForm = ({ onAuthComplete }: AuthFormProps) => {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="text-xs text-gray-600 mt-4">
+                  Fields marked with * are required
                 </div>
 
                 <Button 

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,6 +23,18 @@ import ReportsPage from "./pages/ReportsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SchoolSettings from "./pages/SchoolSettings";
 import ChatPage from "./pages/ChatPage";
+import MasoomPage from "./pages/MasoomPage";
+
+// BuddySafe Awareness Pages
+import CyberbullyingAwareness from "./pages/CyberbullyingAwareness";
+import PhysicalBullyingAwareness from "./pages/PhysicalBullyingAwareness";
+import AcademicPressureAwareness from "./pages/AcademicPressureAwareness";
+import SubstanceAbuseAwareness from "./pages/SubstanceAbuseAwareness";
+import SubstanceAbuseViolenceAwareness from "./pages/SubstanceAbuseViolenceAwareness";
+import SexualHarassmentAwareness from "./pages/SexualHarassmentAwareness";
+import OnlineSafetyAwareness from "./pages/OnlineSafetyAwareness";
+import RespectRelationshipsAwareness from "./pages/RespectRelationshipsAwareness";
+import MentalHealthAwareness from "./pages/MentalHealthAwareness";
 
 // Components
 import { ProfanityFilterProvider } from "@/components/profanity-filter-provider";
@@ -47,6 +58,18 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/resources/*" element={<Resources />} />
+            <Route path="/masoom" element={<MasoomPage />} />
+            
+            {/* BuddySafe awareness pages - accessible to all users */}
+            <Route path="/cyberbullying-awareness" element={<CyberbullyingAwareness />} />
+            <Route path="/physical-bullying-awareness" element={<PhysicalBullyingAwareness />} />
+            <Route path="/academic-pressure-awareness" element={<AcademicPressureAwareness />} />
+            <Route path="/substance-abuse-awareness" element={<SubstanceAbuseAwareness />} />
+            <Route path="/substance-abuse-violence-awareness" element={<SubstanceAbuseViolenceAwareness />} />
+            <Route path="/sexual-harassment-awareness" element={<SexualHarassmentAwareness />} />
+            <Route path="/online-safety-awareness" element={<OnlineSafetyAwareness />} />
+            <Route path="/respect-relationships-awareness" element={<RespectRelationshipsAwareness />} />
+            <Route path="/mental-health-awareness" element={<MentalHealthAwareness />} />
             
             {/* Protected student routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>

@@ -1,4 +1,14 @@
-import { Report } from "@/components/reports/columns"
+
+export interface Report {
+  id: string;
+  studentName: string;
+  grade: string;
+  lastAssessment: string;
+  wellnessScore: number;
+  riskLevel: "low" | "medium" | "high";
+  interventions: number;
+  lastUpdated: string;
+}
 
 export const reportData: Report[] = [
   {
@@ -101,4 +111,4 @@ export const reportData: Report[] = [
     interventions: 0,
     lastUpdated: "2023-06-19"
   }
-]
+];
