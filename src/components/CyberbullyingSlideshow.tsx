@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -8,7 +7,7 @@ interface CyberbullingSlideshowProps {
   language: 'en' | 'hi';
 }
 
-const CyberbullyingSlideshow: React.FC<CyberbullySlideshowProps> = ({ onClose, language }) => {
+const CyberbullyingSlideshow: React.FC<CyberbullingSlideshowProps> = ({ onClose, language }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
