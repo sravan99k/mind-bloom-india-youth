@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, X } from "lucide-react";
+import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Footer from "@/components/Footer";
 import CyberbullyingSlideshow from "@/components/CyberbullingSlideshow";
 import CSASlideshow from "@/components/CSASlideshow";
@@ -13,11 +15,28 @@ import { csaQuizQuestions } from "@/data/csaQuiz";
 import { adultQuizQuestions } from "@/data/adultquiz";
 
 const MasoomPage = () => {
-
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   type ContentType = 'cyberbullying' | 'csa' | 'adult';
   
   const [showSlideshow, setShowSlideshow] = useState<'none' | ContentType>('none');
   const [showQuiz, setShowQuiz] = useState<{isOpen: boolean, type: ContentType}>({isOpen: false, type: 'cyberbullying'});
+  
+  // Get current section from URL
+  const currentSection = searchParams.get('section') as ContentType | null;
+  const activeTab = searchParams.get('tab') || 'overview';
+  
+  // Handle URL changes
+  useEffect(() => {
+    const section = searchParams.get('section') as ContentType | null;
+    if (section) {
+      // Auto-open slideshow if 'learn' tab is active
+      if (searchParams.get('tab') === 'learn') {
+        setShowSlideshow(section);
+      }
+    }
+  }, [searchParams]);
   
   const handleOpenQuiz = (type: ContentType) => {
     setShowQuiz({isOpen: true, type});
@@ -33,6 +52,24 @@ const MasoomPage = () => {
 
   const handleCloseSlideshow = () => {
     setShowSlideshow('none');
+    if (currentSection) {
+      // Return to overview tab when closing slideshow
+      setSearchParams({ section: currentSection, tab: 'overview' });
+    }
+  };
+
+  const handleLearnMore = (type: ContentType) => {
+    setSearchParams({ section: type, tab: 'overview' });
+  };
+
+  const handleBackToMain = () => {
+    setSearchParams({});
+  };
+
+  const handleTabChange = (value: string) => {
+    if (currentSection) {
+      setSearchParams({ section: currentSection, tab: value });
+    }
   };
 
   const handleCall = (number: string) => {
@@ -669,6 +706,74 @@ const MasoomPage = () => {
     </div>
   );
 
+  // Show section-specific content with tabs
+  if (currentSection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="max-w-6xl mx-auto p-6 py-12">
+          {/* Back button */}
+          <Button 
+            onClick={handleBackToMain}
+            variant="outline"
+            className="mb-6 flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Main
+          </Button>
+
+          {/* Tabs for each section */}
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="learn">Learn More</TabsTrigger>
+              <TabsTrigger value="quiz">Take Quiz</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="space-y-4">
+              {currentSection === 'cyberbullying' && <CyberbullyingContent />}
+              {currentSection === 'csa' && <CSAContent />}
+              {currentSection === 'adult' && <AdultCSAContent />}
+            </TabsContent>
+            
+            <TabsContent value="learn" className="space-y-4">
+              {currentSection === 'cyberbullying' && (
+                <div className="bg-white rounded-lg p-6">
+                  <CyberbullyingSlideshow onClose={() => handleTabChange('overview')} />
+                </div>
+              )}
+              {currentSection === 'csa' && (
+                <div className="bg-white rounded-lg p-6">
+                  <CSASlideshow onClose={() => handleTabChange('overview')} />
+                </div>
+              )}
+              {currentSection === 'adult' && (
+                <div className="bg-white rounded-lg p-6">
+                  <AdultCSASlideshow onClose={() => handleTabChange('overview')} />
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="quiz" className="space-y-4">
+              <div className="bg-white rounded-lg p-6">
+                <QuizModal 
+                  isOpen={true} 
+                  onClose={() => handleTabChange('overview')} 
+                  title={currentSection === 'cyberbullying' ? 'Cyberbullying Quiz' : 
+                         currentSection === 'csa' ? 'Child Safety Quiz' : 'Adult CSA Awareness Quiz'}
+                  questions={currentSection === 'cyberbullying' ? cyberbullyingQuizQuestions : 
+                            currentSection === 'csa' ? csaQuizQuestions : adultQuizQuestions}
+                  language="en"
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Main landing page
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="max-w-6xl mx-auto p-6 py-12">
@@ -749,8 +854,8 @@ const MasoomPage = () => {
               <Card className="border-blue-200 bg-blue-50">
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl"></span>
-                    <CardTitle className="text-2xl font-bold text-blue-900">Cyberbullying</CardTitle>
+                    <span className="text-2xl">🌐</span>
+                    <CardTitle className="text-2xl font-bold text-blue-900">Digital Safety & Cyberbullying</CardTitle>
                   </div>
                   <p className="text-blue-700 text-lg">Learn how to stay safe online</p>
                 </CardHeader>
@@ -761,18 +866,14 @@ const MasoomPage = () => {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenSlideshow('cyberbullying');
-                      }}
+                      onClick={() => handleLearnMore('cyberbullying')}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
                     >
                       Learn More
                     </Button>
                     <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenQuiz('cyberbullying');
+                      onClick={() => {
+                        setSearchParams({ section: 'cyberbullying', tab: 'quiz' });
                       }}
                       variant="outline"
                       className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 text-lg"
@@ -787,7 +888,7 @@ const MasoomPage = () => {
               <Card className="border-purple-200 bg-purple-50">
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl"></span>
+                    <span className="text-2xl">🛡️</span>
                     <CardTitle className="text-2xl font-bold text-purple-900">Child Sexual Abuse</CardTitle>
                   </div>
                   <p className="text-purple-700 text-lg">Important safety information for children</p>
@@ -799,18 +900,14 @@ const MasoomPage = () => {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenSlideshow('csa');
-                      }}
+                      onClick={() => handleLearnMore('csa')}
                       className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg"
                     >
                       Learn More
                     </Button>
                     <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenQuiz('csa');
+                      onClick={() => {
+                        setSearchParams({ section: 'csa', tab: 'quiz' });
                       }}
                       variant="outline"
                       className="border-purple-600 text-purple-600 hover:bg-purple-50 px-6 py-3 text-lg"
@@ -853,18 +950,14 @@ const MasoomPage = () => {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenSlideshow('adult');
-                    }}
+                    onClick={() => handleLearnMore('adult')}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 text-lg"
                   >
                     Learn More
                   </Button>
                   <Button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenQuiz('adult');
+                    onClick={() => {
+                      setSearchParams({ section: 'adult', tab: 'quiz' });
                     }}
                     variant="outline"
                     className="border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 text-lg"
@@ -876,92 +969,7 @@ const MasoomPage = () => {
             </Card>
           </div>
 
-        {/* Cyberbullying Slideshow Popup */}
-        {showSlideshow === 'cyberbullying' && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-xl font-semibold">Cyberbullying Information</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                <CyberbullyingSlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Adult CSA Slideshow Popup */}
-        {showSlideshow === 'adult' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-            <div className="relative w-full max-w-5xl bg-white rounded-lg shadow-2xl h-[90vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="text-xl font-semibold text-gray-900">Adult CSA Awareness</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="p-1 rounded-full hover:bg-gray-100"
-                  aria-label="Close"
-                >
-                  <X className="w-6 h-6 text-gray-500" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <AdultCSASlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* CSA Slideshow Popup */}
-        {showSlideshow === 'csa' && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-xl font-semibold">Child Safety Information</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                <CSASlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-      
-      {/* Quiz Modals */}
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'cyberbullying'}
-        onClose={handleCloseQuiz}
-        title="Cyberbullying Quiz"
-        questions={cyberbullyingQuizQuestions}
-        language="en"
-      />
-      
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'csa'}
-        onClose={handleCloseQuiz}
-        title="Child Safety Quiz"
-        questions={csaQuizQuestions}
-        language="en"
-      />
-      
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'adult'}
-        onClose={handleCloseQuiz}
-        title="Adult CSA Awareness Quiz"
-        questions={adultQuizQuestions}
-        language="en"
-      />
       
       <Footer />
     </div>
