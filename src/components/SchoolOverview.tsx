@@ -29,9 +29,8 @@ const riskLevelBadge = (riskLevel: "low" | "medium" | "high") => {
 const SchoolOverview = () => {
 	const { user } = useAuth();
 	const userRole = user?.role;
-	const isAdmin = user?.user_metadata?.isAdmin;
-	// Unified role logic for counselor/admin
-	const isCounselorOrAdmin = userRole === "management" || user?.user_metadata?.role === "counselor" || isAdmin;
+	// Unified role logic for counselor/admin - simplified since ExtendedUser doesn't have user_metadata
+	const isCounselorOrAdmin = userRole === "management";
 
 	return (
 		<div className="w-full max-w-7xl mx-auto px-4 py-10">
