@@ -8,6 +8,7 @@ import CyberbullyingSlideshow from "@/components/CyberbullingSlideshow";
 import CSASlideshow from "@/components/CSASlideshow";
 import AdultCSASlideshow from "@/components/AdultCSASlideshow";
 import QuizModal from "@/components/QuizModal";
+import GoogleTranslateDropdown from "@/components/GoogleTranslateDropdown";
 import { cyberbullyingQuizQuestions } from "@/data/cyberbullyingQuiz";
 import { csaQuizQuestions } from "@/data/csaQuiz";
 import { adultQuizQuestions } from "@/data/adultquiz";
@@ -671,6 +672,9 @@ const MasoomPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* Google Translate Dropdown */}
+      <GoogleTranslateDropdown />
+      
       <div className="max-w-6xl mx-auto p-6 py-12">
         {/* Header with Logos */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'end', gap: '4rem', marginBottom: '1rem' }}>
