@@ -1,14 +1,4 @@
-// Define Report type locally since columns file doesn't exist
-export interface Report {
-  id: string;
-  studentName: string;
-  grade: string;
-  lastAssessment: string;
-  wellnessScore: number;
-  riskLevel: "low" | "medium" | "high";
-  interventions: number;
-  lastUpdated: string;
-}
+import { Report } from "@/components/reports/columns"
 
 export const reportData: Report[] = [
   {

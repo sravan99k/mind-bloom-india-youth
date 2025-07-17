@@ -1,39 +1,14 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, X } from "lucide-react";
+import { Shield, Heart, Phone, AlertTriangle, Users, FileText, ArrowRight, MonitorSmartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
-import CyberbullyingSlideshow from "@/components/CyberbullingSlideshow";
-import CSASlideshow from "@/components/CSASlideshow";
-import AdultCSASlideshow from "@/components/AdultCSASlideshow";
-import QuizModal from "@/components/QuizModal";
-import { cyberbullyingQuizQuestions } from "@/data/cyberbullyingQuiz";
-import { csaQuizQuestions } from "@/data/csaQuiz";
-import { adultQuizQuestions } from "@/data/adultquiz";
+import CyberbullyingSlides from "@/components/cyberbullying/CyberbullyingSlides";
 
 const MasoomPage = () => {
-
-  type ContentType = 'cyberbullying' | 'csa' | 'adult';
-  
-  const [showSlideshow, setShowSlideshow] = useState<'none' | ContentType>('none');
-  const [showQuiz, setShowQuiz] = useState<{isOpen: boolean, type: ContentType}>({isOpen: false, type: 'cyberbullying'});
-  
-  const handleOpenQuiz = (type: ContentType) => {
-    setShowQuiz({isOpen: true, type});
-  };
-  
-  const handleCloseQuiz = () => {
-    setShowQuiz(prev => ({...prev, isOpen: false}));
-  };
-  
-  const handleOpenSlideshow = (type: ContentType) => {
-    setShowSlideshow(type);
-  };
-
-  const handleCloseSlideshow = () => {
-    setShowSlideshow('none');
-  };
+  const [activeSection, setActiveSection] = useState<'intro' | 'cyberbullying' | 'csa'>('intro');
+  const [showCyberbullyingSlides, setShowCyberbullyingSlides] = useState(false);
 
   const handleCall = (number: string) => {
     window.location.href = `tel:${number}`;
@@ -42,31 +17,8 @@ const MasoomPage = () => {
   const CyberbullyingContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Cyberbullying</h1>
-        <p className="text-xl text-blue-600 mb-6">Learn how to stay safe online</p>
-        
-        <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md text-left">
-          <p className="text-gray-700 text-lg mb-6">
-            Learn about online safety, cyberbullying, and how to protect yourself from digital threats. 
-            Understand what to do if someone is mean to you online.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-            <Button 
-              onClick={() => handleOpenSlideshow('cyberbullying')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
-            >
-              Learn More
-            </Button>
-            <Button 
-              onClick={() => handleOpenQuiz('cyberbullying')}
-              variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 text-lg"
-            >
-              Take Quiz
-            </Button>
-          </div>
-        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Cyberbullying Awareness</h2>
+        <p className="text-lg text-gray-600">Stay safe online and protect yourself from digital threats</p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
@@ -245,36 +197,13 @@ const MasoomPage = () => {
   const CSAContent = () => (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Child Sexual Abuse</h1>
-        <p className="text-xl text-purple-600 mb-6">Important safety information for children</p>
-        
-        <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md text-left">
-          <p className="text-gray-700 text-lg mb-6">
-            Learn about body safety, how to recognize inappropriate behavior, and what to do if someone makes you uncomfortable. 
-            Know your rights and how to get help.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-            <Button 
-              onClick={() => handleOpenSlideshow('csa')}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg"
-            >
-              Learn More
-            </Button>
-            <Button 
-              onClick={() => handleOpenQuiz('csa')}
-              variant="outline"
-              className="border-purple-600 text-purple-600 hover:bg-purple-50 px-6 py-3 text-lg"
-            >
-              Take Quiz
-            </Button>
-          </div>
-        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Child Sexual Abuse Awareness</h2>
+        <p className="text-lg text-gray-600">Understanding, preventing, and staying safe</p>
       </div>
 
       <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-xl text-blue-900">What is Child Sexual Abuse?</CardTitle>
+          <CardTitle className="text-xl text-blue-900">What is Child Sexual Abuse (CSA)?</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-blue-800 leading-relaxed mb-4">
@@ -464,220 +393,39 @@ const MasoomPage = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderQuizModal = () => {
-    if (!showQuiz.isOpen) return null;
-    
-    const quizData = showQuiz.type === 'cyberbullying' ? cyberbullyingQuizQuestions : csaQuizQuestions;
-    const title = showQuiz.type === 'cyberbullying' ? 'Cyberbullying Quiz' : 'Child Safety Quiz';
-    
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <QuizModal 
-            isOpen={showQuiz.isOpen} 
-            onClose={handleCloseQuiz} 
-            title={title}
-            questions={quizData}
-            language="en"
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const renderSlideshow = () => {
-    if (showSlideshow === 'cyberbullying') {
-      return (
-        <div className="fixed inset-0 bg-white z-50 p-4 overflow-auto">
-          <div className="max-w-4xl mx-auto">
-            <button 
-              onClick={handleCloseSlideshow}
-              className="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 rounded-full p-2 z-10"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <CyberbullyingSlideshow onClose={handleCloseSlideshow} />
-          </div>
-        </div>
-      );
-    } else if (showSlideshow === 'csa') {
-      return (
-        <div className="fixed inset-0 bg-white z-50 p-4 overflow-auto">
-          <div className="max-w-4xl mx-auto">
-            <button 
-              onClick={handleCloseSlideshow}
-              className="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 rounded-full p-2 z-10"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <CSASlideshow onClose={handleCloseSlideshow} />
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const AdultCSAContent = () => (
-    <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Adult CSA Awareness</h1>
-        <p className="text-xl text-indigo-600 mb-6">Protecting Children: Educating Adults About Child Sexual Abuse</p>
-        <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md text-left">
-          <p className="text-gray-700 text-lg">
-            Gain the knowledge and tools to recognize, prevent, and respond to child sexual abuse. Learn how abuse happens, its warning signs, and how to create safe environments for children through informed, proactive adult action.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-            <Button 
-              onClick={() => handleOpenSlideshow('adult')}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 text-lg"
-            >
-              Learn More
-            </Button>
-            <Button 
-              onClick={() => handleOpenQuiz('adult')}
-              variant="outline"
-              className="border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 text-lg"
-            >
-              Take Quiz
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <Card className="border-indigo-200 bg-indigo-50">
-        <CardHeader>
-          <CardTitle className="text-xl text-indigo-900">Understanding Adult Survivors</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-indigo-800 leading-relaxed mb-4">
-            Childhood sexual abuse can have lasting effects into adulthood. Many survivors experience 
-            emotional, psychological, and physical impacts that continue throughout their lives.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-white rounded border border-indigo-200">
-              <h4 className="font-semibold text-indigo-800 mb-2">Common Long-term Effects</h4>
-              <ul className="text-sm text-indigo-700 space-y-1">
-                <li>• Anxiety, depression, or PTSD</li>
-                <li>• Difficulty with trust and relationships</li>
-                <li>• Low self-esteem and self-blame</li>
-                <li>• Physical health issues</li>
-                <li>• Substance abuse or addiction</li>
-              </ul>
-            </div>
-            <div className="p-4 bg-white rounded border border-indigo-200">
-              <h4 className="font-semibold text-indigo-800 mb-2">Healing and Recovery</h4>
-              <ul className="text-sm text-indigo-700 space-y-1">
-                <li>• Therapy and counseling</li>
-                <li>• Support groups for survivors</li>
-                <li>• Self-care practices</li>
-                <li>• Setting healthy boundaries</li>
-                <li>• Learning to trust again</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-purple-200 bg-purple-50">
-        <CardHeader>
-          <CardTitle className="text-xl text-purple-900">How to Support a Survivor</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-purple-800 mb-2">Do:</h4>
-              <ul className="text-sm text-purple-700 space-y-2">
-                <li>• <strong>Listen</strong> without judgment</li>
-                <li>• <strong>Believe</strong> them</li>
-                <li>• <strong>Respect</strong> their pace of healing</li>
-                <li>• <strong>Offer</strong> ongoing support</li>
-                <li>• <strong>Encourage</strong> professional help</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-purple-800 mb-2">Don't:</h4>
-              <ul className="text-sm text-purple-700 space-y-2">
-                <li>• Ask for details about the abuse</li>
-                <li>• Blame or question their actions</li>
-                <li>• Pressure them to "get over it"</li>
-                <li>• Share their story without permission</li>
-                <li>• Try to be their therapist</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-red-200 bg-red-50">
-        <CardHeader>
-          <CardTitle className="text-xl text-red-900 flex items-center gap-2">
-            <Phone className="w-5 h-5" />
-            Support Services for Adult Survivors
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { 
-                name: "iCALL Psychosocial Helpline", 
-                number: "9152987821", 
-                desc: "Mental health support for adults (Mon-Sat, 10AM-8PM)" 
-              },
-              { 
-                name: "Snehi Mental Health Helpline", 
-                number: "+91-11-40769002", 
-                desc: "Emotional support for survivors" 
-              },
-              { 
-                name: "RAHI Foundation", 
-                number: "+91-11-41654002", 
-                desc: "Support for women survivors of childhood sexual abuse" 
-              },
-              { 
-                name: "VIMHANS Helpline", 
-                number: "+91-11-26963892", 
-                desc: "Professional mental health support" 
-              }
-            ].map((contact, index) => (
-              <div key={index} className="p-3 bg-white rounded border border-red-200">
-                <div className="font-medium text-red-800">{contact.name}</div>
-                <div className="text-sm text-red-600 mb-2">{contact.desc}</div>
-                <Button
-                  size="sm"
-                  onClick={() => handleCall(contact.number.replace(/\D/g, ''))}
-                  className="w-full bg-red-600 hover:bg-red-700"
-                >
-                  Call {contact.number}
-                </Button>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 p-3 bg-white rounded border border-red-200">
-            <p className="text-sm text-red-700">
-              <strong>Online Support:</strong> Visit <a href="https://www.rainn.org/" target="_blank" rel="noopener noreferrer" className="underline">RAINN.org</a> or 
-              <a href="https://www.1in6.org/" target="_blank" rel="noopener noreferrer" className="underline ml-2">1in6.org</a>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="max-w-6xl mx-auto p-6 py-12">
+    <div className="min-h-screen bg-gray-50">
+      {showCyberbullyingSlides && (
+        <CyberbullyingSlides onClose={() => setShowCyberbullyingSlides(false)} />
+      )}
+      <div className="container mx-auto px-4 py-8">
         {/* Header with Logos */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'end', gap: '4rem', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <img src="/images/yi-logo.png" alt="Young Indians Logo" style={{ height: 60 }} />
             <span style={{ marginTop: 8, fontSize: 14, color: '#888', textAlign: 'center' }}></span>
-          </div>
+{{ ... }}
+```
+
+becomes:
+
+```tsx
+{{ ... }}
+      </Card>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {showCyberbullyingSlides && (
+        <CyberbullyingSlides onClose={() => setShowCyberbullyingSlides(false)} />
+      )}
+      <div className="container mx-auto px-4 py-8">
+        {/* Header with Logos */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'end', gap: '4rem', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <img src="/images/masoom-logo.png" alt="Masoom Logo" style={{ height: 60 }} />
             <span style={{ marginTop: 8, fontSize: 14, color: '#888', textAlign: 'center' }}></span>
@@ -690,7 +438,8 @@ const MasoomPage = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4 text-center">SAVE CHILDHOOD</h1>
         <h2 className="text-2xl font-semibold text-blue-600 mb-2 text-center">FIGHT AGAINST CHILD SEXUAL ABUSE & CYBERBULLYING</h2>
 
-        <div className="space-y-8">
+        {activeSection === 'intro' && (
+          <div className="space-y-8">
             {/* About Section */}
             <Card className="border-blue-200 bg-blue-50">
               <CardHeader>
@@ -722,105 +471,77 @@ const MasoomPage = () => {
                       a better place for everyone to live and work.
                     </p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+              <Footer />
+            </div>
 
             {/* Mission Statement */}
             <Card className="border-green-200 bg-green-50">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold text-green-900 flex items-center justify-center gap-2">
-                  <span></span> Our Mission 
+{{ ... }}
+              <CardHeader>
+                <CardTitle className="text-xl text-green-900 flex items-center gap-2">
+                  Our Mission
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <div className="max-w-3xl">
-                  <p className="text-green-800 leading-relaxed text-center text-lg">
-                    Together, we work to keep children safe by teaching them about dangers, providing help when needed, 
-                    and making sure every child can grow up in a safe environment where they can learn and be happy.
-                  </p>
-                </div>
+              <CardContent>
+                <p className="text-green-800 leading-relaxed text-center text-lg">
+                  Together, we work to keep children safe by teaching them about dangers, providing help when needed, 
+                  and making sure every child can grow up in a safe environment where they can learn and be happy.
+                </p>
               </CardContent>
             </Card>
 
-            {/* Action Cards */}
+            {/* Action Buttons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Cyberbullying Card */}
-              <Card className="border-blue-200 bg-blue-50">
+              <Card 
+                className="border-blue-200 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
+                onClick={() => setActiveSection('cyberbullying')}
+              >
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl"></span>
-                    <CardTitle className="text-2xl font-bold text-blue-900">Cyberbullying</CardTitle>
-                  </div>
-                  <p className="text-blue-700 text-lg">Learn how to stay safe online</p>
+                  <CardTitle className="text-xl text-blue-900 flex items-center gap-3">
+                    <Shield className="w-8 h-8" />
+                    <div className="flex-1">
+                      Cyberbullying
+
+                      <CardDescription className="text-blue-700 mt-1">
+                        Learn how to stay safe online
+                      </CardDescription>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-blue-600" />
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-blue-800 mb-6">
+                  <p className="text-blue-800">
                     Learn about online safety, cyberbullying, and how to protect yourself from digital threats. 
                     Understand what to do if someone is mean to you online.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenSlideshow('cyberbullying');
-                      }}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
-                    >
-                      Learn More
-                    </Button>
-                    <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenQuiz('cyberbullying');
-                      }}
-                      variant="outline"
-                      className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 text-lg"
-                    >
-                      Take Quiz
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
 
-              {/* CSA Card */}
-              <Card className="border-purple-200 bg-purple-50">
+              <Card 
+                className="border-red-200 bg-red-50 hover:bg-red-100 cursor-pointer transition-colors"
+                onClick={() => setActiveSection('csa')}
+              >
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl"></span>
-                    <CardTitle className="text-2xl font-bold text-purple-900">Child Sexual Abuse</CardTitle>
-                  </div>
-                  <p className="text-purple-700 text-lg">Important safety information for children</p>
+                  <CardTitle className="text-xl text-red-900 flex items-center gap-3">
+                    <Shield className="w-8 h-8" />
+                    <div className="flex-1">
+                      Child Sexual Abuse 
+                      <CardDescription className="text-red-700 mt-1">
+                        Important safety information for children
+                      </CardDescription>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-red-600" />
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-purple-800 mb-6">
+                  <p className="text-red-800">
                     Learn about body safety, how to recognize inappropriate behavior, and what to do if someone 
                     makes you uncomfortable. Know your rights and how to get help.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenSlideshow('csa');
-                      }}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-lg"
-                    >
-                      Learn More
-                    </Button>
-                    <Button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenQuiz('csa');
-                      }}
-                      variant="outline"
-                      className="border-purple-600 text-purple-600 hover:bg-purple-50 px-6 py-3 text-lg"
-                    >
-                      Take Quiz
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
-
             </div>
 
             {/* Statistics Alert */}
@@ -832,140 +553,195 @@ const MasoomPage = () => {
                 Every adult should help protect children.
               </AlertDescription>
             </Alert>
+          </div>
+        );
 
-            {/* Adult CSA Awareness Card */}
-            <Card className="border-indigo-200 bg-indigo-50 mt-8">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-indigo-900">Adult CSA Awareness</CardTitle>
-                <p className="text-indigo-700 text-lg">Protecting Children: Educating Adults About Child Sexual Abuse</p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-indigo-800 mb-4">
-                  Gain the knowledge and tools to recognize, prevent, and respond to child sexual abuse. 
-                  Learn how abuse happens, its warning signs, and how to create safe environments for children through informed, proactive adult action.
-                </p>
-                <ul className="space-y-2 mb-6 text-indigo-800 list-disc pl-5">
-                  <li>Learn to identify subtle signs of potential abuse</li>
-                  <li>Understand grooming behaviors used by perpetrators</li>
-                  <li>Discover how to have age-appropriate conversations with children</li>
-                  <li>Learn strategies for creating safe spaces in homes and communities</li>
-                  <li>Know the steps to take if you suspect abuse is occurring</li>
-                </ul>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenSlideshow('adult');
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 text-lg"
+        return (
+          <div className="min-h-screen bg-gray-50">
+            {showCyberbullyingSlides && (
+              <CyberbullyingSlides onClose={() => setShowCyberbullyingSlides(false)} />
+            )}
+            <main className="container mx-auto px-4 py-8">
+              {/* Navigation Tabs */}
+              <div className="flex space-x-2 mb-8 overflow-x-auto pb-2">
+                <Button
+                  variant={activeSection === 'intro' ? 'default' : 'outline'}
+                  onClick={() => setActiveSection('intro')}
+                  className="whitespace-nowrap"
+                >
+                  <Shield className="mr-2 h-4 w-4" />
+                  Introduction
+                </Button>
+                <Button
+                  variant={activeSection === 'cyberbullying' ? 'default' : 'outline'}
+                  onClick={() => setActiveSection('cyberbullying')}
+                  className="whitespace-nowrap"
+                >
+                  <AlertTriangle className="mr-2 h-4 w-4" />
+                  Cyberbullying
+                </Button>
+                <Button
+                  variant={activeSection === 'csa' ? 'default' : 'outline'}
+                  onClick={() => setActiveSection('csa')}
+                  className="whitespace-nowrap"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Child Safety
+                </Button>
+                {activeSection === 'cyberbullying' && (
+                  <Button
+                    onClick={() => setShowCyberbullyingSlides(true)}
+                    variant="secondary"
+                    className="ml-auto whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    Learn More
+                    <MonitorSmartphone className="mr-2 h-4 w-4" />
+                    View Interactive Guide
                   </Button>
-                  <Button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenQuiz('adult');
-                    }}
-                    variant="outline"
-                    className="border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 text-lg"
-                  >
-                    Take Quiz
-                  </Button>
+                )}
+              </div>
+              {activeSection === 'intro' && (
+                <div className="space-y-8">
+                  {/* About Section */}
+                  <Card className="border-blue-200 bg-blue-50">
+                    <CardHeader>
+                      <CardTitle className="text-2xl text-blue-900 flex items-center gap-2">
+                        <Users className="w-6 h-6" />
+                        About Our Organizations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="p-4 bg-white rounded border border-blue-200">
+                          <h3 className="font-bold text-orange-600 mb-2">Young Indians (Yi)</h3>
+                          <p className="text-sm text-gray-700">
+                            Young Indians is the youth wing of CII. We are young leaders working to make India better 
+                            by helping our communities and being responsible citizens.
+                          </p>
+                        </div>
+                        <div className="p-4 bg-white rounded border border-blue-200">
+                          <h3 className="font-bold text-blue-600 mb-2">MASOOM (Making Schools Safe)</h3>
+                          <p className="text-sm text-gray-700">
+                            MASOOM works to make schools safer for children. We teach about safety, prevent abuse, 
+                            and help children who face problems like bullying or harassment.
+                          </p>
+                        </div>
+                        <div className="p-4 bg-white rounded border border-blue-200">
+                          <h3 className="font-bold text-purple-600 mb-2">CII</h3>
+                          <p className="text-sm text-gray-700">
+                            The Confederation of Indian Industry works with businesses and government to make India 
+                            a better place for everyone to live and work.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Mission Statement */}
+                  <Card className="border-green-200 bg-green-50">
+                    <CardHeader>
+                      <CardTitle className="text-xl text-green-900 flex items-center gap-2">
+                        Our Mission
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-green-800 leading-relaxed text-center text-lg">
+                        Together, we work to keep children safe by teaching them about dangers, providing help when needed, 
+                        and making sure every child can grow up in a safe environment where they can learn and be happy.
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card 
+                      className="border-blue-200 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
+                      onClick={() => setActiveSection('cyberbullying')}
+                    >
+                      <CardHeader>
+                        <CardTitle className="text-xl text-blue-900 flex items-center gap-3">
+                          <Shield className="w-8 h-8" />
+                          <div className="flex-1">
+                            Cyberbullying
+
+                            <CardDescription className="text-blue-700 mt-1">
+                              Learn how to stay safe online
+                            </CardDescription>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-blue-600" />
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-blue-800">
+                          Learn about online safety, cyberbullying, and how to protect yourself from digital threats. 
+                          Understand what to do if someone is mean to you online.
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card 
+                      className="border-red-200 bg-red-50 hover:bg-red-100 cursor-pointer transition-colors"
+                      onClick={() => setActiveSection('csa')}
+                    >
+                      <CardHeader>
+                        <CardTitle className="text-xl text-red-900 flex items-center gap-3">
+                          <Shield className="w-8 h-8" />
+                          <div className="flex-1">
+                            Child Sexual Abuse 
+                            <CardDescription className="text-red-700 mt-1">
+                              Important safety information for children
+                            </CardDescription>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-red-600" />
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-red-800">
+                          Learn about body safety, how to recognize inappropriate behavior, and what to do if someone 
+                          makes you uncomfortable. Know your rights and how to get help.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Statistics Alert */}
+                  <Alert className="border-yellow-200 bg-yellow-50">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                    <AlertDescription className="text-yellow-800">
+                      <strong>Did you know?</strong> Many children don't report when bad things happen to them. 
+                      We want to create safe places where children feel comfortable asking for help. 
+                      Every adult should help protect children.
+                    </AlertDescription>
+                  </Alert>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              )}
 
-        {/* Cyberbullying Slideshow Popup */}
-        {showSlideshow === 'cyberbullying' && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-xl font-semibold">Cyberbullying Information</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                <CyberbullyingSlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
-          </div>
-        )}
+              {activeSection === 'cyberbullying' && (
+                <div>
+                  <Button 
+                    onClick={() => setActiveSection('intro')} 
+                    variant="outline" 
+                    className="mb-6"
+                  >
+                    ← Back to Main Page
+                  </Button>
+                  <CyberbullyingContent />
+                </div>
+              )}
 
-        {/* Adult CSA Slideshow Popup */}
-        {showSlideshow === 'adult' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-            <div className="relative w-full max-w-5xl bg-white rounded-lg shadow-2xl h-[90vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="text-xl font-semibold text-gray-900">Adult CSA Awareness</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="p-1 rounded-full hover:bg-gray-100"
-                  aria-label="Close"
-                >
-                  <X className="w-6 h-6 text-gray-500" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <AdultCSASlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
+              {activeSection === 'csa' && (
+                <div>
+                  <Button 
+                    onClick={() => setActiveSection('intro')} 
+                    variant="outline" 
+                    className="mb-6"
+                  >
+                    ← Back to Main Page
+                  </Button>
+                  <CSAContent />
+                </div>
+              )}
+            </main>
+            <Footer />
           </div>
-        )}
-
-        {/* CSA Slideshow Popup */}
-        {showSlideshow === 'csa' && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-xl font-semibold">Child Safety Information</h3>
-                <button 
-                  onClick={() => setShowSlideshow('none')}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                <CSASlideshow onClose={() => setShowSlideshow('none')} />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Quiz Modals */}
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'cyberbullying'}
-        onClose={handleCloseQuiz}
-        title="Cyberbullying Quiz"
-        questions={cyberbullyingQuizQuestions}
-        language="en"
-      />
-      
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'csa'}
-        onClose={handleCloseQuiz}
-        title="Child Safety Quiz"
-        questions={csaQuizQuestions}
-        language="en"
-      />
-      
-      <QuizModal
-        isOpen={showQuiz.isOpen && showQuiz.type === 'adult'}
-        onClose={handleCloseQuiz}
-        title="Adult CSA Awareness Quiz"
-        questions={adultQuizQuestions}
-        language="en"
-      />
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default MasoomPage;
+        );
+      };
